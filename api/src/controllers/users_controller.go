@@ -14,7 +14,21 @@ import (
 
 // GetAllUsers: retrieves all persisted users
 func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	db, err := db.Connect()
 
+	if err != nil {
+		res.Error(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+	defer db.Close()
+	repo := repos.NewUserRepo(db)
+	result, err := repo.GetUsers()
+
+	if err != nil {
+		res.Error(w, http.StatusInternalServerError, []error{err})
+		return
+	}
+	res.JSON(w, http.StatusOK, result)
 }
 
 // GetUserByID: retrieves a persisted user via a given ID
