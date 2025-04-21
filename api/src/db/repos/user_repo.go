@@ -19,7 +19,7 @@ func NewUserRepo(db *sql.DB) *Users {
 }
 
 func (repo *Users) GetUsers() ([]models.User, error) {
-	rows, err := repo.db.Query("SELECT ID, name, nickname, email, created_on FROM users;")
+	rows, err := repo.db.Query("SELECT id, name, nickname, email, created_on FROM users;")
 
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (repo *Users) GetUsers() ([]models.User, error) {
 	for rows.Next() {
 		var user models.User
 		
-		if err = rows.Scan(&user.ID, &user.Name, &user.Nickname, &user.Email, &user.CreatedOn); err != nil {
+		if err = rows.Scan(&user.Id, &user.Name, &user.Nickname, &user.Email, &user.CreatedOn); err != nil {
 			return nil, err
 		}
 
@@ -42,7 +42,7 @@ func (repo *Users) GetUsers() ([]models.User, error) {
 // CreateUser: ...
 func (repo *Users) CreateUser(user models.User) (uint64, error) {
 	statement, err := repo.db.Prepare(
-		"INSERT INTO users(name, nickname, email, password) values(?, ?, ?, ?)",
+		"INSERT INTO users(name, nickname, email, password) VALUES(?, ?, ?, ?)",
 	)
 
 	if err != nil {
