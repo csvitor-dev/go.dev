@@ -17,7 +17,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	db, err := db.Connect()
 
 	if err != nil {
-		res.Error(w, http.StatusInternalServerError, []error{err})
+		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
 	defer db.Close()
@@ -25,7 +25,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	result, err := repo.GetUsers()
 
 	if err != nil {
-		res.Error(w, http.StatusInternalServerError, []error{err})
+		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
 	res.JSON(w, http.StatusOK, result)
@@ -58,7 +58,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	db, err := db.Connect()
 	
 	if err != nil {
-		res.Error(w, http.StatusInternalServerError, []error{err})
+		res.SingleError(w, http.StatusInternalServerError, err)
 		return;
 	}
 	defer db.Close()
@@ -66,7 +66,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 	result, err := repo.CreateUser(user)
 
 	if err != nil {
-		res.Error(w, http.StatusInternalServerError, []error{err})
+		res.SingleError(w, http.StatusInternalServerError, err)
 		return;
 	}
 

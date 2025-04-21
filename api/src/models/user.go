@@ -21,6 +21,7 @@ func (u *User) Prepare() []error {
 	if errs := u.validate(); errs != nil {
 		return errs
 	}
+
 	u.format()
 	return nil
 }

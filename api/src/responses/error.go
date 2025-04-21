@@ -14,3 +14,11 @@ func Error(w http.ResponseWriter, status int, errs []error) {
 		Errors: hook,
 	})
 }
+
+func SingleError(w http.ResponseWriter, status int, err error) {
+	JSON(w, status, struct {
+		Error string `json:"error"`
+	}{
+		Error: err.Error(),
+	})
+}
