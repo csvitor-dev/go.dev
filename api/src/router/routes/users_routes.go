@@ -6,35 +6,35 @@ import (
 	c "github.com/csvitor-dev/social-media/api/src/controllers"
 )
 
-var baseURI = "/users"
-var paramID = baseURI + "/{id}"
+var baseUri = "/users"
+var paramId = baseUri + "/{id}"
 
 var getAllUsers = Route{
-	URI: baseURI,
+	URI: baseUri,
 	Method: http.MethodGet,
 	Handler: c.GetAllUsers,
 	RequireAuth: false,
 }
 var getUserByID = Route{
-	URI: paramID,
+	URI: paramId,
 	Method: http.MethodGet,
 	Handler: c.GetUserByID,
 	RequireAuth: false,
 }
 var createUser = Route{
-	URI: baseURI,
+	URI: baseUri,
 	Method: http.MethodPost,
 	Handler: c.CreateUser,
 	RequireAuth: false,
 }
 var updateUser = Route{
-	URI: paramID,
+	URI: paramId,
 	Method: http.MethodPut,
 	Handler: c.UpdateUserByID,
 	RequireAuth: false,
 }
 var deleteUser = Route{
-	URI: paramID,
+	URI: paramId,
 	Method: http.MethodDelete,
 	Handler: c.DeleteUserByID,
 	RequireAuth: false,

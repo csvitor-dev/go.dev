@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/csvitor-dev/social-media/api/src/db"
 	"github.com/csvitor-dev/social-media/api/src/db/repos"
 	"github.com/csvitor-dev/social-media/api/src/models"
+	"github.com/gorilla/mux"
 
 	res "github.com/csvitor-dev/social-media/api/src/responses"
 )
@@ -33,7 +35,29 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 
 // GetUserByID: retrieves a persisted user via a given ID
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+	
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
 
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repo := repos.NewUserRepo(db)
+	user, err := repo.GetById(userId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusNotFound, err)
+		return
+	}
+	res.JSON(w, http.StatusOK, user)
 }
 
 // CreateUser: creates a user and delegates its persistence
@@ -42,24 +66,24 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		res.Error(w, http.StatusUnprocessableEntity, []error{err})
-		return;
+		return
 	}
 	var user models.User
-	
+
 	if err = json.Unmarshal(body, &user); err != nil {
 		res.Error(w, http.StatusBadRequest, []error{err})
-		return;
+		return
 	}
 
 	if errs := user.Prepare(); errs != nil {
 		res.Error(w, http.StatusBadRequest, errs)
-		return;
+		return
 	}
 	db, err := db.Connect()
-	
+
 	if err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
-		return;
+		return
 	}
 	defer db.Close()
 	repo := repos.NewUserRepo(db)
@@ -67,7 +91,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
-		return;
+		return
 	}
 
 	res.JSON(w, http.StatusCreated, struct {

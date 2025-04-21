@@ -25,11 +25,11 @@ func (repo *Users) GetUsers() ([]models.User, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	var users []models.User
+	var users = []models.User{}
 
 	for rows.Next() {
 		var user models.User
-		
+
 		if err = rows.Scan(&user.Id, &user.Name, &user.Nickname, &user.Email, &user.CreatedOn); err != nil {
 			return nil, err
 		}
@@ -37,6 +37,30 @@ func (repo *Users) GetUsers() ([]models.User, error) {
 		users = append(users, user)
 	}
 	return users, nil
+}
+
+func (repo *Users) GetById(id uint64) (models.User, error) {
+	rows, err := repo.db.Query(
+		"SELECT id, name, nickname, email, created_on FROM users WHERE id = ?", id,
+	)
+
+	if err != nil {
+		return models.User{}, err
+	}
+	var user models.User
+
+	if rows.Next() {
+		if err := rows.Scan(
+			&user.Id,
+			&user.Name,
+			&user.Nickname,
+			&user.Email,
+			&user.CreatedOn,
+		); err != nil {
+			return models.User{}, err
+		}
+	}
+	return user, nil
 }
 
 // CreateUser: ...
