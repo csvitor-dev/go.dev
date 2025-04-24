@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/api/src/config"
-	"github.com/csvitor-dev/social-media/api/src/router"
+	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/src/api/router"
 )
 
 func main() {

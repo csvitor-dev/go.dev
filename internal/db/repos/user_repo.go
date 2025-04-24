@@ -3,7 +3,7 @@ package repos
 import (
 	"database/sql"
 
-	"github.com/csvitor-dev/social-media/api/src/models"
+	"github.com/csvitor-dev/social-media/internal/models"
 )
 
 // Users: ...

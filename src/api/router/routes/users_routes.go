@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	c "github.com/csvitor-dev/social-media/api/src/controllers"
+	c "github.com/csvitor-dev/social-media/src/api/controllers"
 )
 
 var baseUri = "/users"

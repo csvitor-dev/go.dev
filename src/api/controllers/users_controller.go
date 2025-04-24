@@ -6,12 +6,12 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/csvitor-dev/social-media/api/src/db"
-	"github.com/csvitor-dev/social-media/api/src/db/repos"
-	"github.com/csvitor-dev/social-media/api/src/models"
+	"github.com/csvitor-dev/social-media/internal/db"
+	"github.com/csvitor-dev/social-media/internal/db/repos"
+	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/gorilla/mux"
 
-	res "github.com/csvitor-dev/social-media/api/src/responses"
+	res "github.com/csvitor-dev/social-media/pkg/responses"
 )
 
 // GetAllUsers: retrieves all persisted users
