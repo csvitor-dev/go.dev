@@ -2,6 +2,7 @@ package models
 
 import (
 	"errors"
+	"net/mail"
 	"strings"
 	"time"
 )
@@ -36,21 +37,25 @@ func (u *User) ToMap() map[string]any {
 }
 
 func (u *User) validate(isRegisterStage bool) []error {
-	if !isRegisterStage {
-		return []error{}
-	}
 	var errs []error
 
-	if u.Name == "" {
+	if u.Name == "" && isRegisterStage {
 		errs = append(errs, errors.New("the name field is required"))
 	}
-	if u.Nickname == "" {
+
+	if u.Nickname == "" && isRegisterStage {
 		errs = append(errs, errors.New("the nickname field is required"))
 	}
-	if u.Email == "" {
+
+	if u.Email == "" && isRegisterStage {
 		errs = append(errs, errors.New("the email field is required"))
 	}
-	if u.Password == "" {
+
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		errs = append(errs, err)
+	}
+
+	if u.Password == "" && isRegisterStage {
 		errs = append(errs, errors.New("the password field is required"))
 	}
 	return errs
