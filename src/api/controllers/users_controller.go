@@ -12,41 +12,38 @@ import (
 	"github.com/gorilla/mux"
 
 	res "github.com/csvitor-dev/social-media/pkg/responses"
+	"github.com/csvitor-dev/social-media/pkg/types"
 )
 
 // GetAllUsers: retrieves all persisted users
-func GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func GetAllUsers(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	db, err := db.Connect()
 
 	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
+		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
 	result, err := repo.GetUsers()
 
 	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
+		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
-	res.Json(w, http.StatusOK, result)
+	return res.Json(w, http.StatusOK, result)
 }
 
-// GetUserByID: retrieves a persisted user via a given ID
-func GetUserByID(w http.ResponseWriter, r *http.Request) {
+// GetUserById: retrieves a persisted user via a given id
+func GetUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	params := mux.Vars(r)
 	userId, err := strconv.ParseUint(params["id"], 10, 64)
 
 	if err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
+		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 	db, err := db.Connect()
 
 	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
+		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 	defer db.Close()
 
@@ -54,59 +51,84 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	user, err := repo.GetById(userId)
 
 	if err != nil {
-		res.SingleError(w, http.StatusNotFound, err)
-		return
+		return res.SingleError(w, http.StatusNotFound, err)
 	}
-	res.Json(w, http.StatusOK, user)
+	return res.Json(w, http.StatusOK, user)
 }
 
 // CreateUser: creates a user and delegates its persistence
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+func CreateUser(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	body, err := io.ReadAll(r.Body)
 
 	if err != nil {
-		res.Error(w, http.StatusUnprocessableEntity, []error{err})
-		return
+		return res.SingleError(w, http.StatusUnprocessableEntity, err)
 	}
 	var user models.User
 
 	if err = json.Unmarshal(body, &user); err != nil {
-		res.Error(w, http.StatusBadRequest, []error{err})
-		return
+		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := user.Prepare(); errs != nil {
-		res.Error(w, http.StatusBadRequest, errs)
-		return
+	if errs := user.Prepare(true); errs != nil {
+		return res.Error(w, http.StatusBadRequest, errs)
 	}
 	db, err := db.Connect()
 
 	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
+		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
 	result, err := repo.CreateUser(user)
 
 	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
+		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 
-	res.Json(w, http.StatusCreated, struct {
+	return res.Json(w, http.StatusCreated, struct {
 		Id uint64 `json:"id"`
 	}{
 		Id: result,
 	})
 }
 
-// UpdateUser: updates a user based on the provided ID
-func UpdateUserByID(w http.ResponseWriter, r *http.Request) {
+// UpdateUserById: updates a user based on the provided id
+func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
 
+	if err != nil {
+		return res.SingleError(w, http.StatusBadRequest, err)
+	}
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		return res.SingleError(w, http.StatusUnprocessableEntity, err)
+	}
+	var user models.User
+
+	if err = json.Unmarshal(body, &user); err != nil {
+		return res.SingleError(w, http.StatusBadRequest, err)
+	}
+
+	if errs := user.Prepare(false); errs != nil {
+		return res.Error(w, http.StatusBadRequest, errs)
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+	}
+	defer db.Close()
+	repo := repos.NewUsersRepository(db)
+
+	if err := repo.UpdateUserById(userId, user); err != nil {
+		return res.SingleError(w, http.StatusInternalServerError, err)
+	}
+	return res.Json(w, http.StatusNoContent, nil)
 }
 
-// DeleteUser: deletes a user based on the provided ID
-func DeleteUserByID(w http.ResponseWriter, r *http.Request) {
-
+// DeleteUserById: deletes a user based on the provided id
+func DeleteUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
+	return 0
 }
