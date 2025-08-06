@@ -6,8 +6,8 @@ import (
 	"net/http"
 )
 
-// JSON: writes an JSON body like response message
-func JSON(w http.ResponseWriter, status int, data any) {
+// Json: writes an JSON body like response message
+func Json(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 

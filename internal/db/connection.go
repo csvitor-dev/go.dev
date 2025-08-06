@@ -7,24 +7,15 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var (
-	DB *sql.DB = nil
-)
-
 func Connect() (*sql.DB, error) {
-	if DB != nil {
-		return DB, nil
-	}
-	var err error
-	DB, err = sql.Open("mysql", config.Env.CONNECTION_STRING)
+	db, err := sql.Open("mysql", config.Env.CONNECTION_STRING)
 
 	if err != nil {
 		return nil, err
 	}
-
-	if err = DB.Ping(); err != nil {
-		DB.Close()
+	if err = db.Ping(); err != nil {
+		db.Close()
 		return nil, err
 	}
-	return DB, nil
+	return db, nil
 }

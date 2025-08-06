@@ -8,7 +8,7 @@ func Error(w http.ResponseWriter, status int, errs []error) {
 	for _, v := range errs {
 		hook = append(hook, v.Error())
 	}
-	JSON(w, status, struct {
+	Json(w, status, struct {
 		Errors []string `json:"errors"`
 	}{
 		Errors: hook,
@@ -16,7 +16,7 @@ func Error(w http.ResponseWriter, status int, errs []error) {
 }
 
 func SingleError(w http.ResponseWriter, status int, err error) {
-	JSON(w, status, struct {
+	Json(w, status, struct {
 		Error string `json:"error"`
 	}{
 		Error: err.Error(),

@@ -6,13 +6,13 @@ import (
 	"github.com/csvitor-dev/social-media/internal/models"
 )
 
-// Users: ...
+// Users: Users repository interface
 type Users struct {
 	db *sql.DB
 }
 
-// NewUserRepo: ...
-func NewUserRepo(db *sql.DB) *Users {
+// NewUsersRepository: creates a new instance of Users repository
+func NewUsersRepository(db *sql.DB) *Users {
 	return &Users{
 		db,
 	}

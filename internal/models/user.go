@@ -8,17 +8,17 @@ import (
 
 // User: the model represents the 'User' entity mapped from the database
 type User struct {
-	Id        uint64 `json:"id,omitempty"`
-	Name      string `json:"name,omitempty"`
-	Nickname  string `json:"nickname,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Password  string `json:"password,omitempty"`
-	CreatedOn time.Time `json:"created_on,omitempty"`
+	Id        uint64    `json:"id,omitempty"`
+	Name      string    `json:"name,omitempty"`
+	Nickname  string    `json:"nickname,omitempty"`
+	Email     string    `json:"email,omitempty"`
+	Password  string    `json:"password,omitempty"`
+	CreatedOn time.Time `json:"created_on,omitzero"`
 }
 
 // Prepare: Prepare makes validation and formatation of data
-func (u *User) Prepare() []error {
-	if errs := u.validate(); errs != nil {
+func (u *User) Prepare(isRegisterStage bool) []error {
+	if errs := u.validate(isRegisterStage); errs != nil {
 		return errs
 	}
 
@@ -26,7 +26,19 @@ func (u *User) Prepare() []error {
 	return nil
 }
 
-func (u *User) validate() []error {
+func (u *User) ToMap() map[string]any {
+	return map[string]any{
+		"name":     u.Name,
+		"nickname": u.Nickname,
+		"email":    u.Email,
+		"password": u.Password,
+	}
+}
+
+func (u *User) validate(isRegisterStage bool) []error {
+	if !isRegisterStage {
+		return []error{}
+	}
 	var errs []error
 
 	if u.Name == "" {

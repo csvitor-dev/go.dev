@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/csvitor-dev/social-media/internal/db"
-	"github.com/csvitor-dev/social-media/internal/db/repos"
+	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/gorilla/mux"
 
@@ -23,21 +23,21 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	repo := repos.NewUserRepo(db)
+	repo := repos.NewUsersRepository(db)
 	result, err := repo.GetUsers()
 
 	if err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
-	res.JSON(w, http.StatusOK, result)
+	res.Json(w, http.StatusOK, result)
 }
 
 // GetUserByID: retrieves a persisted user via a given ID
 func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	userId, err := strconv.ParseUint(params["id"], 10, 64)
-	
+
 	if err != nil {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
@@ -50,14 +50,14 @@ func GetUserByID(w http.ResponseWriter, r *http.Request) {
 	}
 	defer db.Close()
 
-	repo := repos.NewUserRepo(db)
+	repo := repos.NewUsersRepository(db)
 	user, err := repo.GetById(userId)
 
 	if err != nil {
 		res.SingleError(w, http.StatusNotFound, err)
 		return
 	}
-	res.JSON(w, http.StatusOK, user)
+	res.Json(w, http.StatusOK, user)
 }
 
 // CreateUser: creates a user and delegates its persistence
@@ -86,7 +86,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer db.Close()
-	repo := repos.NewUserRepo(db)
+	repo := repos.NewUsersRepository(db)
 	result, err := repo.CreateUser(user)
 
 	if err != nil {
@@ -94,10 +94,10 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	res.JSON(w, http.StatusCreated, struct {
-		ID uint64 `json:"id"`
+	res.Json(w, http.StatusCreated, struct {
+		Id uint64 `json:"id"`
 	}{
-		ID: result,
+		Id: result,
 	})
 }
 
