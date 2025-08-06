@@ -16,7 +16,7 @@ func Connect() (*sql.DB, error) {
 		return DB, nil
 	}
 	var err error
-	DB, err = sql.Open("mysql", config.ConnectionString)
+	DB, err = sql.Open("mysql", config.Env.CONNECTION_STRING)
 
 	if err != nil {
 		return nil, err

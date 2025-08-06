@@ -12,6 +12,6 @@ func main() {
 	config.LoadEnv()
 
 	r := router.Generate()
-	log.Printf("Listening on port '%s'\n", config.Port)
-	log.Fatal(http.ListenAndServe(config.Port, r))
+	log.Printf("Listening on port '%s'\n", config.Env.PORT)
+	log.Fatalln(http.ListenAndServe(config.Env.PORT, r))
 }
