@@ -1,5 +1,3 @@
--- run this script on your database
-
 CREATE DATABASE IF NOT EXISTS socialdb;
 USE socialdb;
 
