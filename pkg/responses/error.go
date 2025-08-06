@@ -1,22 +1,26 @@
 package responses
 
-import "net/http"
+import (
+	"net/http"
 
-func Error(w http.ResponseWriter, status int, errs []error) {
+	"github.com/csvitor-dev/social-media/pkg/types"
+)
+
+func Error(w http.ResponseWriter, status types.StatusCode, errs []error) types.StatusCode {
 	var hook []string
 
 	for _, v := range errs {
 		hook = append(hook, v.Error())
 	}
-	Json(w, status, struct {
+	return Json(w, status, struct {
 		Errors []string `json:"errors"`
 	}{
 		Errors: hook,
 	})
 }
 
-func SingleError(w http.ResponseWriter, status int, err error) {
-	Json(w, status, struct {
+func SingleError(w http.ResponseWriter, status types.StatusCode, err error) types.StatusCode {
+	return Json(w, status, struct {
 		Error string `json:"error"`
 	}{
 		Error: err.Error(),

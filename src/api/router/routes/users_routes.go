@@ -10,38 +10,38 @@ var baseUri = "/users"
 var paramId = baseUri + "/{id}"
 
 var getAllUsers = Route{
-	URI:         baseUri,
+	Uri:         baseUri,
 	Method:      http.MethodGet,
 	Handler:     users.GetAllUsers,
 	RequireAuth: false,
 }
-var getUserByID = Route{
-	URI:         paramId,
+var getUserById = Route{
+	Uri:         paramId,
 	Method:      http.MethodGet,
-	Handler:     users.GetUserByID,
+	Handler:     users.GetUserById,
 	RequireAuth: false,
 }
 var createUser = Route{
-	URI:         baseUri,
+	Uri:         baseUri,
 	Method:      http.MethodPost,
 	Handler:     users.CreateUser,
 	RequireAuth: false,
 }
 var updateUser = Route{
-	URI:         paramId,
+	Uri:         paramId,
 	Method:      http.MethodPut,
-	Handler:     users.UpdateUserByID,
+	Handler:     users.UpdateUserById,
 	RequireAuth: false,
 }
 var deleteUser = Route{
-	URI:         paramId,
+	Uri:         paramId,
 	Method:      http.MethodDelete,
-	Handler:     users.DeleteUserByID,
+	Handler:     users.DeleteUserById,
 	RequireAuth: false,
 }
 
 var UserRoutes = []Route{
-	getAllUsers, getUserByID,
+	getAllUsers, getUserById,
 	createUser, updateUser,
 	deleteUser,
 }
