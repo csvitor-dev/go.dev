@@ -21,8 +21,8 @@ func NewUsersRepository(db *sql.DB) *Users {
 	}
 }
 
-// GetUsers: retrieves all users from the database
-func (repo *Users) GetUsers() ([]models.User, error) {
+// FindAll: retrieves all users from the database
+func (repo *Users) FindAll() ([]models.User, error) {
 	rows, err := repo.db.Query("SELECT id, name, nickname, email, created_on FROM users;")
 
 	if err != nil {
@@ -43,9 +43,9 @@ func (repo *Users) GetUsers() ([]models.User, error) {
 	return users, nil
 }
 
-// GetById: retrieves a user by its id.
+// FindById: retrieves a user by its id.
 // It returns an error if not found
-func (repo *Users) GetById(id uint64) (models.User, error) {
+func (repo *Users) FindById(id uint64) (models.User, error) {
 	rows, err := repo.db.Query(
 		"SELECT id, name, nickname, email, created_on FROM users WHERE id = ?", id,
 	)
@@ -69,8 +69,8 @@ func (repo *Users) GetById(id uint64) (models.User, error) {
 	return user, nil
 }
 
-// CreateUser: inserts a new user into the database
-func (repo *Users) CreateUser(user models.User) (uint64, error) {
+// Create: inserts a new user into the database
+func (repo *Users) Create(user models.User) (uint64, error) {
 	statement, err := repo.db.Prepare(
 		"INSERT INTO users(name, nickname, email, password) VALUES(?, ?, ?, ?)",
 	)
@@ -92,8 +92,8 @@ func (repo *Users) CreateUser(user models.User) (uint64, error) {
 	return uint64(id), nil
 }
 
-// UpdateUserById: updates a user by its id.
-func (repo *Users) UpdateUserById(id uint64, user models.User) error {
+// Update: updates a user by its id.
+func (repo *Users) Update(id uint64, user models.User) error {
 	query, fields, err := repo.buildQueryWithValidFields(user)
 
 	if err != nil {
@@ -132,4 +132,18 @@ func (repo *Users) buildQueryWithValidFields(user models.User) (string, []any, e
 	}
 
 	return fmt.Sprintf("UPDATE users SET %s WHERE id = ?;", strings.Join(partials, ", ")), validFields, nil
+}
+
+func (repo *Users) Delete(id uint64) error {
+	statement, err := repo.db.Prepare("DELETE FROM users WHERE id = ?;")
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	if _, err = statement.Exec(id); err != nil {
+		return err
+	}
+	return nil
 }

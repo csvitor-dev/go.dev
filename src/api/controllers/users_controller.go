@@ -24,7 +24,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	}
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
-	result, err := repo.GetUsers()
+	result, err := repo.FindAll()
 
 	if err != nil {
 		return res.SingleError(w, http.StatusInternalServerError, err)
@@ -46,9 +46,8 @@ func GetUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 	defer db.Close()
-
 	repo := repos.NewUsersRepository(db)
-	user, err := repo.GetById(userId)
+	user, err := repo.FindById(userId)
 
 	if err != nil {
 		return res.SingleError(w, http.StatusNotFound, err)
@@ -79,7 +78,7 @@ func CreateUser(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	}
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
-	result, err := repo.CreateUser(user)
+	result, err := repo.Create(user)
 
 	if err != nil {
 		return res.SingleError(w, http.StatusInternalServerError, err)
@@ -122,7 +121,7 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
 
-	if err := repo.UpdateUserById(userId, user); err != nil {
+	if err := repo.Update(userId, user); err != nil {
 		return res.SingleError(w, http.StatusInternalServerError, err)
 	}
 	return res.Json(w, http.StatusNoContent, nil)
@@ -130,5 +129,22 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 
 // DeleteUserById: deletes a user based on the provided id
 func DeleteUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
-	return 0
+	params := mux.Vars(r)
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		return res.SingleError(w, http.StatusBadRequest, err)
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		return res.SingleError(w, http.StatusInternalServerError, err)
+	}
+	defer db.Close()
+	repo := repos.NewUsersRepository(db)
+
+	if err := repo.Delete(userId); err != nil {
+		return res.SingleError(w, http.StatusNotFound, err)
+	}
+	return res.Json(w, http.StatusNoContent, nil)
 }
