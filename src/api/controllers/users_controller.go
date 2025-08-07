@@ -71,7 +71,11 @@ func CreateUser(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	if errs := request.Validate(); len(errs) > 0 {
 		return res.Error(w, http.StatusBadRequest, errs)
 	}
-	user := request.Map()
+	user, err := request.Map()
+
+	if err != nil {
+		return res.SingleError(w, http.StatusBadRequest, err)
+	}
 	db, err := db.Connect()
 
 	if err != nil {
@@ -114,7 +118,11 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	if errs := request.Validate(); len(errs) > 0 {
 		return res.Error(w, http.StatusBadRequest, errs)
 	}
-	user := request.Map()
+	user, err := request.Map()
+
+	if err != nil {
+		return res.SingleError(w, http.StatusBadRequest, err)
+	}
 	db, err := db.Connect()
 
 	if err != nil {

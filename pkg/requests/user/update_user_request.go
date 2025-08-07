@@ -2,7 +2,6 @@ package user
 
 import (
 	"slices"
-	"strings"
 
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/csvitor-dev/social-media/pkg/utils/validations"
@@ -15,28 +14,15 @@ type UpdateUserRequest struct {
 }
 
 func (r *UpdateUserRequest) Validate() []error {
-	nameErrors := validations.NewString(r.Name, "name").IsOptional().Between(3, 50).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	nameErrors := validations.NewString(r.Name, "name").IsOptional().Between(3, 50).Result()
 
-	nickErrors := validations.NewString(r.Nickname, "nickname").IsOptional().Between(3, 50).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	nickErrors := validations.NewString(r.Nickname, "nickname").IsOptional().Between(3, 50).Result()
 
-	emailErrors := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email().
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	emailErrors := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email().Result()
 
 	return slices.Concat(nameErrors, nickErrors, emailErrors)
 }
 
-func (r *UpdateUserRequest) Map() models.User {
-	return models.User{
-		Name:     r.Name,
-		Nickname: r.Nickname,
-		Email:    r.Email,
-	}
+func (r *UpdateUserRequest) Map() (models.User, error) {
+	return models.NewUser(r.Name, r.Nickname, r.Email)
 }

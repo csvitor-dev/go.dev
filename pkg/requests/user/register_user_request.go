@@ -2,7 +2,6 @@ package user
 
 import (
 	"slices"
-	"strings"
 
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/csvitor-dev/social-media/pkg/utils/validations"
@@ -16,34 +15,17 @@ type RegisterUserRequest struct {
 }
 
 func (r *RegisterUserRequest) Validate() []error {
-	nameErrors := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	nameErrors := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).Result()
 
-	nickErrors := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	nickErrors := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).Result()
 
-	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Result()
 
-	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).
-		Refine(func(input string) (string, error) {
-			return strings.TrimSpace(input), nil
-		}).Result()
+	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
 	return slices.Concat(nameErrors, nickErrors, emailErrors, passwordErrors)
 }
 
-func (r *RegisterUserRequest) Map() models.User {
-	return models.User{
-		Name:     r.Name,
-		Nickname: r.Nickname,
-		Email:    r.Email,
-		Password: r.Password,
-	}
+func (r *RegisterUserRequest) Map() (models.User, error) {
+	return models.NewUser(r.Name, r.Nickname, r.Email, r.Password)
 }
