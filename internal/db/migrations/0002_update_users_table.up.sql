@@ -1,0 +1,4 @@
+USE socialdb;
+
+ALTER TABLE users
+    ADD COLUMN updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP();

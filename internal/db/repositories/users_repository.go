@@ -23,7 +23,7 @@ func NewUsersRepository(db *sql.DB) *Users {
 
 // FindAll: retrieves all users from the database
 func (repo *Users) FindAll() ([]models.User, error) {
-	rows, err := repo.db.Query("SELECT id, name, nickname, email, created_on FROM users;")
+	rows, err := repo.db.Query("SELECT id, name, nickname, email, created_on, updated_on FROM users;")
 
 	if err != nil {
 		return nil, err
@@ -34,7 +34,13 @@ func (repo *Users) FindAll() ([]models.User, error) {
 	for rows.Next() {
 		var user models.User
 
-		if err = rows.Scan(&user.Id, &user.Name, &user.Nickname, &user.Email, &user.CreatedOn); err != nil {
+		if err = rows.Scan(&user.Id,
+			&user.Name,
+			&user.Nickname,
+			&user.Email,
+			&user.CreatedOn,
+			&user.UpdatedOn,
+		); err != nil {
 			return nil, err
 		}
 
@@ -47,7 +53,7 @@ func (repo *Users) FindAll() ([]models.User, error) {
 // It returns an error if not found
 func (repo *Users) FindById(id uint64) (models.User, error) {
 	rows, err := repo.db.Query(
-		"SELECT id, name, nickname, email, created_on FROM users WHERE id = ?", id,
+		"SELECT id, name, nickname, email, created_on, updated_on FROM users WHERE id = ?;", id,
 	)
 
 	if err != nil {
@@ -62,6 +68,7 @@ func (repo *Users) FindById(id uint64) (models.User, error) {
 			&user.Nickname,
 			&user.Email,
 			&user.CreatedOn,
+			&user.UpdatedOn,
 		); err != nil {
 			return models.User{}, err
 		}
@@ -72,7 +79,7 @@ func (repo *Users) FindById(id uint64) (models.User, error) {
 // Create: inserts a new user into the database
 func (repo *Users) Create(user models.User) (uint64, error) {
 	statement, err := repo.db.Prepare(
-		"INSERT INTO users(name, nickname, email, password) VALUES(?, ?, ?, ?)",
+		"INSERT INTO users(name, nickname, email, password) VALUES(?, ?, ?, ?);",
 	)
 
 	if err != nil {
@@ -119,18 +126,19 @@ func (repo *Users) buildQueryWithValidFields(user models.User) (string, []any, e
 		partials    []string
 		validFields []any
 	)
-	fields := user.ToMap()
+	fields := user.ToMap([]string{"name", "nickname", "email"})
 
 	for key, field := range fields {
-		if key != "password" && field != "" {
+		if field != "" {
 			partials = append(partials, fmt.Sprintf("%s = ?", key))
 			validFields = append(validFields, field)
 		}
 	}
+
 	if len(validFields) == 0 {
 		return "", nil, errors.New("no fields to update")
 	}
-
+	partials = append(partials, "updated_on = CURRENT_TIMESTAMP()")
 	return fmt.Sprintf("UPDATE users SET %s WHERE id = ?;", strings.Join(partials, ", ")), validFields, nil
 }
 
