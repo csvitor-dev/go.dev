@@ -4,7 +4,7 @@ import (
 	"slices"
 
 	"github.com/csvitor-dev/social-media/internal/models"
-	"github.com/csvitor-dev/social-media/pkg/utils/validations"
+	"github.com/csvitor-dev/social-media/utils/validations"
 )
 
 type UpdateUserRequest struct {
