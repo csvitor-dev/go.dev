@@ -1,10 +1,11 @@
 package models
 
 import (
-	"errors"
-	"net/mail"
 	"strings"
 	"time"
+
+	"github.com/csvitor-dev/social-media/pkg/errors"
+	"github.com/csvitor-dev/social-media/pkg/security"
 )
 
 // User: the model represents the 'User' entity mapped from the database
@@ -15,54 +16,52 @@ type User struct {
 	Email     string    `json:"email,omitempty"`
 	Password  string    `json:"password,omitempty"`
 	CreatedOn time.Time `json:"created_on,omitzero"`
+	UpdatedOn time.Time `json:"updated_on,omitzero"`
 }
 
-// Prepare: Prepare makes validation and formatation of data
-func (u *User) Prepare(isRegisterStage bool) []error {
-	if errs := u.validate(isRegisterStage); errs != nil {
-		return errs
+// NewUser: creates a new user instance, hashing the given password
+func NewUser(name, nickname, email string, password ...string) (User, error) {
+	if len(password) > 1 {
+		return User{}, errors.ErrTooManyFields
+	}
+	now := time.Now()
+	user := User{
+		Name:      strings.TrimSpace(name),
+		Nickname:  strings.TrimSpace(nickname),
+		Email:     strings.TrimSpace(email),
+		CreatedOn: now,
+		UpdatedOn: now,
 	}
 
-	u.format()
-	return nil
+	if len(password) == 0 {
+		return user, nil
+	}
+	hashedPassword, err := security.Cryptify(password[0])
+
+	if err != nil {
+		return User{}, err
+	}
+	user.Password = hashedPassword
+
+	return user, nil
 }
 
-func (u *User) ToMap() map[string]any {
-	return map[string]any{
-		"name":     u.Name,
-		"nickname": u.Nickname,
-		"email":    u.Email,
-		"password": u.Password,
+func (u *User) ToMap(fields []string) map[string]any {
+	hook := map[string]any{
+		"id":         u.Id,
+		"name":       u.Name,
+		"nickname":   u.Nickname,
+		"email":      u.Email,
+		"password":   u.Password,
+		"created_on": u.CreatedOn,
+		"updated_on": u.UpdatedOn,
 	}
-}
+	result := make(map[string]any)
 
-func (u *User) validate(isRegisterStage bool) []error {
-	var errs []error
-
-	if u.Name == "" && isRegisterStage {
-		errs = append(errs, errors.New("the name field is required"))
+	for _, field := range fields {
+		if _, exists := hook[field]; exists {
+			result[field] = hook[field]
+		}
 	}
-
-	if u.Nickname == "" && isRegisterStage {
-		errs = append(errs, errors.New("the nickname field is required"))
-	}
-
-	if u.Email == "" && isRegisterStage {
-		errs = append(errs, errors.New("the email field is required"))
-	}
-
-	if _, err := mail.ParseAddress(u.Email); err != nil {
-		errs = append(errs, err)
-	}
-
-	if u.Password == "" && isRegisterStage {
-		errs = append(errs, errors.New("the password field is required"))
-	}
-	return errs
-}
-
-func (u *User) format() {
-	u.Name = strings.TrimSpace(u.Name)
-	u.Nickname = strings.TrimSpace(u.Nickname)
-	u.Email = strings.TrimSpace(u.Email)
+	return result
 }
