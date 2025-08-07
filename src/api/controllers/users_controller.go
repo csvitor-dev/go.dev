@@ -8,9 +8,9 @@ import (
 
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
-	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/gorilla/mux"
 
+	"github.com/csvitor-dev/social-media/pkg/requests/user"
 	res "github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/pkg/types"
 )
@@ -62,15 +62,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	if err != nil {
 		return res.SingleError(w, http.StatusUnprocessableEntity, err)
 	}
-	var user models.User
+	var request user.RegisterUserRequest
 
-	if err = json.Unmarshal(body, &user); err != nil {
+	if err = json.Unmarshal(body, &request); err != nil {
 		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := user.Prepare(true); errs != nil {
+	if errs := request.Validate(); len(errs) > 0 {
 		return res.Error(w, http.StatusBadRequest, errs)
 	}
+	user := request.Map()
 	db, err := db.Connect()
 
 	if err != nil {
@@ -104,15 +105,16 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 	if err != nil {
 		return res.SingleError(w, http.StatusUnprocessableEntity, err)
 	}
-	var user models.User
+	var request user.UpdateUserRequest
 
-	if err = json.Unmarshal(body, &user); err != nil {
+	if err = json.Unmarshal(body, &request); err != nil {
 		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := user.Prepare(false); errs != nil {
+	if errs := request.Validate(); len(errs) > 0 {
 		return res.Error(w, http.StatusBadRequest, errs)
 	}
+	user := request.Map()
 	db, err := db.Connect()
 
 	if err != nil {
