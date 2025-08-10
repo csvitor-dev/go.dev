@@ -4,16 +4,19 @@ import (
 	"net/http"
 
 	"github.com/csvitor-dev/social-media/pkg/types"
+	"github.com/csvitor-dev/social-media/utils/slices"
 )
 
-func Error(w http.ResponseWriter, status types.StatusCode, errs []error) types.StatusCode {
-	var hook []string
+func ValidationErrors(w http.ResponseWriter, status types.StatusCode, errs map[string][]error) types.StatusCode {
+	hook := map[string][]string{}
 
-	for _, v := range errs {
-		hook = append(hook, v.Error())
+	for key, errors := range errs {
+		hook[key] = slices.Map(errors, func(err error, i int) string {
+			return err.Error()
+		})
 	}
 	return Json(w, status, struct {
-		Errors []string `json:"errors"`
+		Errors map[string][]string `json:"errors"`
 	}{
 		Errors: hook,
 	})
@@ -26,3 +29,11 @@ func SingleError(w http.ResponseWriter, status types.StatusCode, err error) type
 		Error: err.Error(),
 	})
 }
+
+/*
+	"errors": {
+		"1": [],
+		"2": [],
+	}
+	map[string][]string
+*/

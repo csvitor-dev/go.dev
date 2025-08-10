@@ -1,8 +1,6 @@
 package user
 
 import (
-	"slices"
-
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/csvitor-dev/social-media/utils/validations"
 )
@@ -14,7 +12,7 @@ type RegisterUserRequest struct {
 	Password string `json:"password"`
 }
 
-func (r *RegisterUserRequest) Validate() []error {
+func (r *RegisterUserRequest) Validate() map[string][]error {
 	nameErrors := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).Result()
 
 	nickErrors := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).Result()
@@ -23,7 +21,12 @@ func (r *RegisterUserRequest) Validate() []error {
 
 	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
-	return slices.Concat(nameErrors, nickErrors, emailErrors, passwordErrors)
+	return map[string][]error{
+		nameErrors.FieldName:     nameErrors.Errors,
+		nickErrors.FieldName:     nickErrors.Errors,
+		emailErrors.FieldName:    emailErrors.Errors,
+		passwordErrors.FieldName: passwordErrors.Errors,
+	}
 }
 
 func (r *RegisterUserRequest) Map() (models.User, error) {

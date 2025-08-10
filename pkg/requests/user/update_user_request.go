@@ -1,8 +1,6 @@
 package user
 
 import (
-	"slices"
-
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/csvitor-dev/social-media/utils/validations"
 )
@@ -13,14 +11,18 @@ type UpdateUserRequest struct {
 	Email    string `json:"email,omitempty"`
 }
 
-func (r *UpdateUserRequest) Validate() []error {
+func (r *UpdateUserRequest) Validate() map[string][]error {
 	nameErrors := validations.NewString(r.Name, "name").IsOptional().Between(3, 50).Result()
 
 	nickErrors := validations.NewString(r.Nickname, "nickname").IsOptional().Between(3, 50).Result()
 
 	emailErrors := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email().Result()
 
-	return slices.Concat(nameErrors, nickErrors, emailErrors)
+	return map[string][]error{
+		nameErrors.FieldName:  nameErrors.Errors,
+		nickErrors.FieldName:  nickErrors.Errors,
+		emailErrors.FieldName: emailErrors.Errors,
+	}
 }
 
 func (r *UpdateUserRequest) Map() (models.User, error) {
