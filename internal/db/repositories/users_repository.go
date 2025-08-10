@@ -76,6 +76,28 @@ func (repo *Users) FindById(id uint64) (models.User, error) {
 	return user, nil
 }
 
+func (repo *Users) FindByEmail(email string) (models.User, error) {
+	rows, err := repo.db.Query(
+		"SELECT id, password FROM users WHERE email = ?;", email,
+	)
+
+	if err != nil {
+		return models.User{}, err
+	}
+	defer rows.Close()
+	var user models.User
+
+	if rows.Next() {
+		if err := rows.Scan(
+			&user.Id,
+			&user.Password,
+		); err != nil {
+			return models.User{}, err
+		}
+	}
+	return user, nil
+}
+
 // Create: inserts a new user into the database
 func (repo *Users) Create(user models.User) (uint64, error) {
 	statement, err := repo.db.Prepare(
