@@ -3,6 +3,7 @@ package routes
 import (
 	"log"
 	"net/http"
+	"slices"
 
 	"github.com/csvitor-dev/social-media/pkg/types"
 )
@@ -21,4 +22,8 @@ func (route *Route) Call(w http.ResponseWriter, r *http.Request) {
 	status := route.Handler(w, r)
 
 	log.Printf(">> %s %s %v\n", r.Method, r.URL.Path, status)
+}
+
+func GetAll() []Route {
+	return slices.Concat(userRoutes, authRoutes)
 }

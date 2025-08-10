@@ -7,7 +7,7 @@ import (
 
 // Configure: sets up the API routes
 func Configure(r *mux.Router) {
-	for _, route := range routes.UserRoutes {
+	for _, route := range routes.GetAll() {
 		r.HandleFunc(route.Uri, route.Call).Methods(route.Method)
 	}
 }
