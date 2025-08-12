@@ -1,29 +1,28 @@
 package routes
 
 import (
-	"log"
 	"net/http"
 	"slices"
 
-	"github.com/csvitor-dev/social-media/pkg/types"
+	"github.com/csvitor-dev/social-media/src/api/middlewares"
 )
 
 // Route: represents an allowed API route
 type Route struct {
-	Uri         string
-	Method      string
-	Handler     func(http.ResponseWriter, *http.Request) types.StatusCode
-	RequireAuth bool
+	Uri     string
+	Method  string
+	Handler http.HandlerFunc
+	*middlewares.MiddlewareTags
 }
 
-func (route *Route) Call(w http.ResponseWriter, r *http.Request) {
-	log.Printf("<< %s %s\n", r.Method, r.URL.Path)
-
-	status := route.Handler(w, r)
-
-	log.Printf(">> %s %s %v\n", r.Method, r.URL.Path, status)
+func (route *Route) GetHandler() http.HandlerFunc {
+	if !route.HasTag("log") {
+		route.AddTag("log", true)
+	}
+	return middlewares.Apply(route.Handler, route.AllTags()...)
 }
 
-func GetAll() []Route {
+// All: returns all avaliable routes
+func All() []Route {
 	return slices.Concat(userRoutes, authRoutes)
 }
