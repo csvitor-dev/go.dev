@@ -3,11 +3,10 @@ package responses
 import (
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/pkg/types"
 	"github.com/csvitor-dev/social-media/utils/slices"
 )
 
-func ValidationErrors(w http.ResponseWriter, status types.StatusCode, errs map[string][]error) types.StatusCode {
+func ValidationErrors(w http.ResponseWriter, status int, errs map[string][]error) {
 	hook := map[string][]string{}
 
 	for key, errors := range errs {
@@ -15,15 +14,15 @@ func ValidationErrors(w http.ResponseWriter, status types.StatusCode, errs map[s
 			return err.Error()
 		})
 	}
-	return Json(w, status, struct {
+	Json(w, status, struct {
 		Errors map[string][]string `json:"errors"`
 	}{
 		Errors: hook,
 	})
 }
 
-func SingleError(w http.ResponseWriter, status types.StatusCode, err error) types.StatusCode {
-	return Json(w, status, struct {
+func SingleError(w http.ResponseWriter, status int, err error) {
+	Json(w, status, struct {
 		Error string `json:"error"`
 	}{
 		Error: err.Error(),
