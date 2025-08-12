@@ -29,11 +29,3 @@ func SingleError(w http.ResponseWriter, status types.StatusCode, err error) type
 		Error: err.Error(),
 	})
 }
-
-/*
-	"errors": {
-		"1": [],
-		"2": [],
-	}
-	map[string][]string
-*/
