@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/csvitor-dev/social-media/internal/models"
+	"github.com/csvitor-dev/social-media/pkg/requests"
 	"github.com/csvitor-dev/social-media/utils/validations"
 )
 
@@ -12,7 +13,7 @@ type RegisterUserRequest struct {
 	Password string `json:"password"`
 }
 
-func (r *RegisterUserRequest) Validate() map[string][]error {
+func (r *RegisterUserRequest) Validate() requests.RequestOutput {
 	nameErrors := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).Result()
 
 	nickErrors := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).Result()
@@ -21,11 +22,13 @@ func (r *RegisterUserRequest) Validate() map[string][]error {
 
 	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
-	return map[string][]error{
-		nameErrors.FieldName:     nameErrors.Errors,
-		nickErrors.FieldName:     nickErrors.Errors,
-		emailErrors.FieldName:    emailErrors.Errors,
-		passwordErrors.FieldName: passwordErrors.Errors,
+	return requests.RequestOutput{
+		Payload: map[string][]error{
+			nameErrors.FieldName:     nameErrors.Errors,
+			nickErrors.FieldName:     nickErrors.Errors,
+			emailErrors.FieldName:    emailErrors.Errors,
+			passwordErrors.FieldName: passwordErrors.Errors,
+		},
 	}
 }
 

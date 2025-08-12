@@ -68,8 +68,8 @@ func CreateUser(w http.ResponseWriter, r *http.Request) types.StatusCode {
 		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := request.Validate(); len(errs) > 0 {
-		return res.ValidationErrors(w, http.StatusBadRequest, errs)
+	if errs := request.Validate(); errs.HasErrors() {
+		return res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
 	}
 	user, err := request.Map()
 
@@ -115,8 +115,8 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) types.StatusCode {
 		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := request.Validate(); len(errs) > 0 {
-		return res.ValidationErrors(w, http.StatusBadRequest, errs)
+	if errs := request.Validate(); errs.HasErrors() {
+		return res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
 	}
 	user, err := request.Map()
 

@@ -26,8 +26,8 @@ func Login(w http.ResponseWriter, r *http.Request) types.StatusCode {
 		return res.SingleError(w, http.StatusBadRequest, err)
 	}
 
-	if errs := request.Validate(); len(errs) > 0 {
-		return res.ValidationErrors(w, http.StatusBadRequest, errs)
+	if errs := request.Validate(); errs.HasErrors() {
+		return res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
 	}
 	db, err := db.Connect()
 
