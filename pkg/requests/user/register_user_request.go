@@ -22,14 +22,7 @@ func (r *RegisterUserRequest) Validate() requests.RequestOutput {
 
 	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
-	return requests.RequestOutput{
-		Payload: map[string][]error{
-			nameErrors.FieldName:     nameErrors.Errors,
-			nickErrors.FieldName:     nickErrors.Errors,
-			emailErrors.FieldName:    emailErrors.Errors,
-			passwordErrors.FieldName: passwordErrors.Errors,
-		},
-	}
+	return requests.GenerateOutput(nameErrors, nickErrors, emailErrors, passwordErrors)
 }
 
 func (r *RegisterUserRequest) Map() (models.User, error) {

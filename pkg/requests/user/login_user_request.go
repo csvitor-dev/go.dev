@@ -15,10 +15,5 @@ func (r *LoginUserRequest) Validate() requests.RequestOutput {
 
 	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
-	return requests.RequestOutput{
-		Payload: map[string][]error{
-			emailErrors.FieldName:    emailErrors.Errors,
-			passwordErrors.FieldName: passwordErrors.Errors,
-		},
-	}
+	return requests.GenerateOutput(emailErrors, passwordErrors)
 }

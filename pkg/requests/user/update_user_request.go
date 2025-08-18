@@ -19,13 +19,7 @@ func (r *UpdateUserRequest) Validate() requests.RequestOutput {
 
 	emailErrors := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email().Result()
 
-	return requests.RequestOutput{
-		Payload: map[string][]error{
-			nameErrors.FieldName:  nameErrors.Errors,
-			nickErrors.FieldName:  nickErrors.Errors,
-			emailErrors.FieldName: emailErrors.Errors,
-		},
-	}
+	return requests.GenerateOutput(nameErrors, nickErrors, emailErrors)
 }
 
 func (r *UpdateUserRequest) Map() (models.User, error) {
