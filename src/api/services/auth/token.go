@@ -9,6 +9,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 )
 
+var scopeToken *jwt.Token
+
 func CreateToken(userId uint64) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":    userId,
@@ -37,5 +39,6 @@ func ValidateToken(token string) error {
 	if _, ok := refinedToken.Claims.(jwt.MapClaims); !ok || !refinedToken.Valid {
 		return errors.New("auth: invalid token")
 	}
+	scopeToken = refinedToken
 	return nil
 }
