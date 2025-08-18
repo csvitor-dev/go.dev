@@ -19,3 +19,9 @@ func Logger(next http.HandlerFunc) http.HandlerFunc {
 		log.Printf(">> %s %s %v\n", r.Method, r.RequestURI, message)
 	}
 }
+
+func (m *MiddlewarePipeline) AddLogger() *MiddlewarePipeline {
+	m.middlewares = append(m.middlewares, Logger)
+
+	return m
+}

@@ -6,14 +6,8 @@ import (
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
 
-var allMiddlewares = map[string]Middleware{
-	"log":    Logger,
-	"auth-z": Authorize,
-}
-
-func Apply(target http.HandlerFunc, tags ...string) http.HandlerFunc {
-	for _, tag := range tags {
-		middleware := allMiddlewares[tag]
+func Apply(target http.HandlerFunc, middlewares []Middleware) http.HandlerFunc {
+	for _, middleware := range middlewares {
 		target = middleware(target)
 	}
 
