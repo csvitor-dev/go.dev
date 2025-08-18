@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
+	"github.com/csvitor-dev/social-media/src/api/services/auth"
 	"github.com/gorilla/mux"
 
 	"github.com/csvitor-dev/social-media/pkg/requests/user"
@@ -112,6 +114,17 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
+	authId, err := auth.GetUserId()
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != authId {
+		res.SingleError(w, http.StatusForbidden, errors.New("auth: target 'user_id' mismatch"))
+		return
+	}
 	body, err := io.ReadAll(r.Body)
 
 	if err != nil {
@@ -157,6 +170,17 @@ func DeleteUserById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	authId, err := auth.GetUserId()
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != authId {
+		res.SingleError(w, http.StatusForbidden, errors.New("auth: target 'user_id' mismatch"))
 		return
 	}
 	db, err := db.Connect()
