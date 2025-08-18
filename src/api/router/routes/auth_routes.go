@@ -9,9 +9,9 @@ import (
 
 var authRoutes = []Route{
 	{
-		Uri:            "/auth/login",
-		Method:         http.MethodPost,
-		Handler:        controllers.Login,
-		MiddlewareTags: middlewares.NewTags(),
+		Uri:                "/auth/login",
+		Method:             http.MethodPost,
+		Handler:            controllers.Login,
+		MiddlewarePipeline: middlewares.SignPipeline(),
 	},
 }

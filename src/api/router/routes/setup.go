@@ -12,14 +12,12 @@ type Route struct {
 	Uri     string
 	Method  string
 	Handler http.HandlerFunc
-	*middlewares.MiddlewareTags
+	*middlewares.MiddlewarePipeline
 }
 
 func (route *Route) GetHandler() http.HandlerFunc {
-	if !route.HasTag("log") {
-		route.AddTag("log", true)
-	}
-	return middlewares.Apply(route.Handler, route.AllTags()...)
+	route.AddLogger()
+	return middlewares.Apply(route.Handler, route.MiddlewarePipeline.All())
 }
 
 // All: returns all avaliable routes
