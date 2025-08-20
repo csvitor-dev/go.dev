@@ -9,6 +9,7 @@ import (
 
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
+	pkg "github.com/csvitor-dev/social-media/pkg/errors"
 	"github.com/csvitor-dev/social-media/src/api/services/auth"
 	"github.com/gorilla/mux"
 
@@ -55,54 +56,17 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	user, err := repo.FindById(userId)
 
 	if err != nil {
-		res.SingleError(w, http.StatusNotFound, err)
+		var status int
+
+		if errors.Is(err, pkg.ErrUserNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusInternalServerError
+		}
+		res.SingleError(w, status, err)
 		return
 	}
 	res.Json(w, http.StatusOK, user)
-}
-
-// CreateUser: creates a user and delegates its persistence
-func CreateUser(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
-
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
-		return
-	}
-	var request user.RegisterUserRequest
-
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if errs := request.Validate(); errs.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
-		return
-	}
-	user, err := request.Map()
-
-	if err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-	db, err := db.Connect()
-
-	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
-	}
-	defer db.Close()
-	repo := repos.NewUsersRepository(db)
-	result, err := repo.Create(user)
-
-	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
-		return
-	}
-	res.Json(w, http.StatusCreated, map[string]any{
-		"id": result,
-	})
 }
 
 // UpdateUserById: updates a user based on the provided id
