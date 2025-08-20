@@ -10,12 +10,13 @@ import (
 
 func init() {
 	// Load environment variables
-	config.LoadEnv()
+	config.LoadApiEnv()
+	config.LoadEmailEnv()
 }
 
 func main() {
 	r := router.Generate()
 
-	log.Printf("Listening on port '%s'\n", config.Env.PORT)
-	log.Fatalln(http.ListenAndServe(config.Env.PORT, r))
+	log.Printf("Listening on port '%s'\n", config.ApiEnv.PORT)
+	log.Fatalln(http.ListenAndServe(config.ApiEnv.PORT, r))
 }

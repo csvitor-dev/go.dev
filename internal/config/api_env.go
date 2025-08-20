@@ -8,21 +8,21 @@ import (
 	env "github.com/joho/godotenv"
 )
 
-type Enviroment struct {
+type ApiEnviroment struct {
 	SECRET_KEY        []byte
 	PORT              string
 	CONNECTION_STRING string
 }
 
-var Env Enviroment
+var ApiEnv ApiEnviroment
 
-func LoadEnv() {
+func LoadApiEnv() {
 	var err error
 
-	if err = env.Load(); err != nil {
+	if err = env.Load(".env"); err != nil {
 		log.Fatal(err)
 	}
-	Env = Enviroment{
+	ApiEnv = ApiEnviroment{
 		SECRET_KEY: []byte(os.Getenv("AUTH_SECRET_KEY")),
 		PORT:       os.Getenv("API_PORT"),
 		CONNECTION_STRING: fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
@@ -31,4 +31,5 @@ func LoadEnv() {
 			os.Getenv("DB_NAME"),
 		),
 	}
+	log.Println("API enviroment variables loaded successfully")
 }

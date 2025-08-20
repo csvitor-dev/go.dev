@@ -14,7 +14,7 @@ func main() {
 		os.Exit(1)
 	}
 	log.Println("Running database migrations...")
-	config.LoadEnv()
+	config.LoadApiEnv()
 
 	switch os.Args[1] {
 	case "up":
