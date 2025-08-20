@@ -7,11 +7,17 @@ import (
 	"github.com/csvitor-dev/social-media/src/api/middlewares"
 )
 
-var authRoutes = []Route{
+var auth = []Route{
+	{
+		Uri:                "/auth/register",
+		Method:             http.MethodPost,
+		handler:            controllers.Register,
+		MiddlewarePipeline: middlewares.SignPipeline(),
+	},
 	{
 		Uri:                "/auth/login",
 		Method:             http.MethodPost,
-		Handler:            controllers.Login,
+		handler:            controllers.Login,
 		MiddlewarePipeline: middlewares.SignPipeline(),
 	},
 }

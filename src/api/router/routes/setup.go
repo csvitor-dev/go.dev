@@ -11,16 +11,16 @@ import (
 type Route struct {
 	Uri     string
 	Method  string
-	Handler http.HandlerFunc
+	handler http.HandlerFunc
 	*middlewares.MiddlewarePipeline
 }
 
 func (route *Route) GetHandler() http.HandlerFunc {
 	route.AddLogger()
-	return middlewares.Apply(route.Handler, route.MiddlewarePipeline.All())
+	return middlewares.Apply(route.handler, route.MiddlewarePipeline.All()...)
 }
 
 // All: returns all avaliable routes
 func All() []Route {
-	return slices.Concat(userRoutes, authRoutes)
+	return slices.Concat(auth, user, followers)
 }

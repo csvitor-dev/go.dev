@@ -6,7 +6,7 @@ import (
 
 type Middleware func(next http.HandlerFunc) http.HandlerFunc
 
-func Apply(target http.HandlerFunc, middlewares []Middleware) http.HandlerFunc {
+func Apply(target http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	for _, middleware := range middlewares {
 		target = middleware(target)
 	}
