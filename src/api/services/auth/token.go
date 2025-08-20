@@ -6,19 +6,29 @@ import (
 	"time"
 
 	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/google/uuid"
 )
 
 var scopeToken *jwt.Token
+var currentJti string
 
-func CreateToken(userId uint64) (string, error) {
+func CreateToken(user models.User, duration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
-		"user_id":    userId,
+		"user_id":    user.Id,
+		"email":      user.Email,
 		"authorized": true,
-		"exp":        time.Now().Add(time.Hour).Unix(),
+		"jti":        uuid.NewString(),
+		"exp":        time.Now().Add(duration).Unix(),
 	}
 
+	if jti, ok := claims["jti"].(string); ok {
+		currentJti = jti
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	scopeToken = token
+
 	return token.SignedString(config.Env.SECRET_KEY)
 }
 
@@ -35,10 +45,19 @@ func ValidateToken(token string) error {
 	if err != nil {
 		return err
 	}
+	claims, ok := refinedToken.Claims.(jwt.MapClaims)
+	jti, _ := claims["jti"].(string)
 
-	if _, ok := refinedToken.Claims.(jwt.MapClaims); !ok || !refinedToken.Valid {
+	if !ok || !refinedToken.Valid || !isCurrentToken(jti) {
 		return errors.New("auth: invalid token")
 	}
-	scopeToken = refinedToken
 	return nil
+}
+
+func isCurrentToken(jti string) bool {
+	return jti == currentJti
+}
+
+func InvalidateToken() {
+	currentJti = ""
 }
