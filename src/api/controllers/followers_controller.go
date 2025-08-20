@@ -14,7 +14,7 @@ import (
 )
 
 func Follow(w http.ResponseWriter, r *http.Request) {
-	followerId, err := auth.GetUserId()
+	followerId, err := auth.GetUserIdFromToken()
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)
@@ -55,7 +55,7 @@ func Follow(w http.ResponseWriter, r *http.Request) {
 }
 
 func Unfollow(w http.ResponseWriter, r *http.Request) {
-	followerId, err := auth.GetUserId()
+	followerId, err := auth.GetUserIdFromToken()
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)

@@ -78,7 +78,7 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	authId, err := auth.GetUserId()
+	authId, err := auth.GetUserIdFromToken()
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)
@@ -136,7 +136,7 @@ func DeleteUserById(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	authId, err := auth.GetUserId()
+	authId, err := auth.GetUserIdFromToken()
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)
