@@ -20,4 +20,10 @@ var auth = []Route{
 		handler:            controllers.Login,
 		MiddlewarePipeline: middlewares.SignPipeline(),
 	},
+	{
+		Uri:                "/auth/password/refresh",
+		Method:             http.MethodPost,
+		handler:            controllers.RefreshPassword,
+		MiddlewarePipeline: middlewares.SignPipeline().AddAuthZ(),
+	},
 }

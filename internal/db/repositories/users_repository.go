@@ -171,3 +171,32 @@ func (repo *Users) Delete(id uint64) error {
 
 	return err
 }
+
+func (repo *Users) FindPasswordFromUser(id uint64) (string, error) {
+	rows, err := repo.db.Query("SELECT password FROM users WHERE id = ?;", id)
+
+	if err != nil {
+		return "", err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return "", errors.ErrUserNotFound
+	}
+	var password string
+	err = rows.Scan(&password)
+
+	return password, err
+}
+
+func (repo *Users) RefreshPasswordFromUser(id uint64, newPassword string) error {
+	statement, err := repo.db.Prepare("UPDATE users SET password = ? WHERE id = ?;")
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	_, err = statement.Exec(newPassword, id)
+
+	return err
+}
