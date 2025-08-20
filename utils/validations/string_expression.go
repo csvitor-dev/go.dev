@@ -2,6 +2,8 @@ package validations
 
 import (
 	"net/mail"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 type StringExpression struct {
@@ -75,6 +77,21 @@ func (exp *StringExpression) Email() *StringExpression {
 
 	if _, err := mail.ParseAddress(exp.payload); err != nil {
 		exp.error("must be a valid email address")
+	}
+	return exp
+}
+
+func (exp *StringExpression) JWT() *StringExpression {
+	if exp.isOptional && exp.payload == "" {
+		return exp
+	}
+
+	if _, err := jwt.Parse(
+		exp.payload,
+		func(t *jwt.Token) (any, error) {
+			return nil, nil
+		}); err != nil {
+		exp.error("must be a valid JWT format")
 	}
 	return exp
 }
