@@ -1,12 +1,12 @@
-package repos
+package repositories
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/csvitor-dev/social-media/internal/models"
+	"github.com/csvitor-dev/social-media/pkg/errors"
 )
 
 // Users: Users repository interface
@@ -34,7 +34,8 @@ func (repo *Users) FindAll() ([]models.User, error) {
 	for rows.Next() {
 		var user models.User
 
-		if err = rows.Scan(&user.Id,
+		if err = rows.Scan(
+			&user.Id,
 			&user.Name,
 			&user.Nickname,
 			&user.Email,
@@ -43,7 +44,6 @@ func (repo *Users) FindAll() ([]models.User, error) {
 		); err != nil {
 			return nil, err
 		}
-
 		users = append(users, user)
 	}
 	return users, nil
@@ -59,21 +59,22 @@ func (repo *Users) FindById(id uint64) (models.User, error) {
 	if err != nil {
 		return models.User{}, err
 	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return models.User{}, errors.ErrUserNotFound
+	}
 	var user models.User
 
-	if rows.Next() {
-		if err := rows.Scan(
-			&user.Id,
-			&user.Name,
-			&user.Nickname,
-			&user.Email,
-			&user.CreatedOn,
-			&user.UpdatedOn,
-		); err != nil {
-			return models.User{}, err
-		}
-	}
-	return user, nil
+	err = rows.Scan(
+		&user.Id,
+		&user.Name,
+		&user.Nickname,
+		&user.Email,
+		&user.CreatedOn,
+		&user.UpdatedOn,
+	)
+	return user, err
 }
 
 func (repo *Users) FindByEmail(email string) (models.User, error) {
@@ -85,17 +86,17 @@ func (repo *Users) FindByEmail(email string) (models.User, error) {
 		return models.User{}, err
 	}
 	defer rows.Close()
+
+	if !rows.Next() {
+		return models.User{}, errors.ErrUserNotFound
+	}
 	var user models.User
 
-	if rows.Next() {
-		if err := rows.Scan(
-			&user.Id,
-			&user.Password,
-		); err != nil {
-			return models.User{}, err
-		}
-	}
-	return user, nil
+	err = rows.Scan(
+		&user.Id,
+		&user.Password,
+	)
+	return user, err
 }
 
 // Create: inserts a new user into the database
@@ -115,10 +116,7 @@ func (repo *Users) Create(user models.User) (uint64, error) {
 	}
 	id, err := result.LastInsertId()
 
-	if err != nil {
-		return 0, err
-	}
-	return uint64(id), nil
+	return uint64(id), err
 }
 
 // Update: updates a user by its id.
@@ -135,11 +133,9 @@ func (repo *Users) Update(id uint64, user models.User) error {
 		return err
 	}
 	defer statement.Close()
+	_, err = statement.Exec(fields...)
 
-	if _, err = statement.Exec(fields...); err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // buildQueryWithValidFields: builds the SQL query and fields for updating a user.
@@ -158,7 +154,7 @@ func (repo *Users) buildQueryWithValidFields(user models.User) (string, []any, e
 	}
 
 	if len(validFields) == 0 {
-		return "", nil, errors.New("no fields to update")
+		return "", nil, errors.ErrNoFieldsToUpdate
 	}
 	partials = append(partials, "updated_on = CURRENT_TIMESTAMP()")
 	return fmt.Sprintf("UPDATE users SET %s WHERE id = ?;", strings.Join(partials, ", ")), validFields, nil
@@ -171,9 +167,7 @@ func (repo *Users) Delete(id uint64) error {
 		return err
 	}
 	defer statement.Close()
+	_, err = statement.Exec(id)
 
-	if _, err = statement.Exec(id); err != nil {
-		return err
-	}
-	return nil
+	return err
 }
