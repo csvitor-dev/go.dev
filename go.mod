@@ -11,6 +11,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.18.3
 	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
+	github.com/resend/resend-go/v2 v2.23.0
 	golang.org/x/crypto v0.40.0
 )
 
