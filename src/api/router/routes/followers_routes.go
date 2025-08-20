@@ -20,4 +20,16 @@ var followers = []Route{
 		handler:            controllers.Unfollow,
 		MiddlewarePipeline: middlewares.SignPipeline().AddAuthZ(),
 	},
+	{
+		Uri:                "/followers/{userId}",
+		Method:             http.MethodGet,
+		handler:            controllers.GetFollowers,
+		MiddlewarePipeline: middlewares.SignPipeline().AddAuthZ(),
+	},
+	{
+		Uri:                "/following/{userId}",
+		Method:             http.MethodGet,
+		handler:            controllers.GetFollowing,
+		MiddlewarePipeline: middlewares.SignPipeline().AddAuthZ(),
+	},
 }

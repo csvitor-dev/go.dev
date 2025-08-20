@@ -102,7 +102,7 @@ func (repo *Users) FindByEmail(email string) (models.User, error) {
 // Create: inserts a new user into the database
 func (repo *Users) Create(user models.User) (uint64, error) {
 	statement, err := repo.db.Prepare(
-		"INSERT INTO users(name, nickname, email, password) VALUES(?, ?, ?, ?);",
+		"INSERT INTO users(name, nickname, email, password) VALUES (?, ?, ?, ?);",
 	)
 
 	if err != nil {

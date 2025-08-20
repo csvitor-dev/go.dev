@@ -94,3 +94,59 @@ func Unfollow(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Json(w, http.StatusNoContent, nil)
 }
+
+func GetFollowers(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.ParseUint(mux.Vars(r)["userId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewFollowersRepository(db)
+
+	followers, err := repo.FindFollowersByUserId(userId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusOK, map[string]any{
+		"followers": followers,
+		"total":     len(followers),
+	})
+}
+
+func GetFollowing(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.ParseUint(mux.Vars(r)["userId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewFollowersRepository(db)
+
+	following, err := repo.FindFollowingByUserId(userId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusOK, map[string]any{
+		"following": following,
+		"total":     len(following),
+	})
+}
