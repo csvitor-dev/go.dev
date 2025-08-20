@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
@@ -13,6 +14,7 @@ import (
 	res "github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/pkg/security"
 	"github.com/csvitor-dev/social-media/src/api/services/auth"
+	"github.com/csvitor-dev/social-media/src/api/services/email"
 )
 
 // Register: creates a user and delegates its persistence
@@ -96,7 +98,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusUnauthorized, err)
 		return
 	}
-	token, err := auth.CreateToken(user.Id)
+	token, err := auth.CreateToken(user, time.Hour)
 
 	if err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
@@ -109,7 +111,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func RefreshPassword(w http.ResponseWriter, r *http.Request) {
-	authUserId, err := auth.GetUserId()
+	authUserId, err := auth.GetUserIdFromToken()
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)
@@ -167,10 +169,128 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	
+
 	if err = repo.RefreshPasswordFromUser(authUserId, hashedPassword); err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
+	auth.InvalidateToken()
+	res.Json(w, http.StatusNoContent, nil)
+}
+
+func RecoverPassword(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	var request user.RecoverUserPasswordRequest
+
+	if err = json.Unmarshal(body, &request); err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if output := request.Validate(); output.HasErrors() {
+		res.ValidationErrors(w, http.StatusBadRequest, output.Payload)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewUsersRepository(db)
+	targetUser, err := repo.FindByEmail(request.Email)
+
+	if err != nil {
+		if errors.Is(err, pkg.ErrUserNotFound) {
+			res.Json(w, http.StatusNoContent, nil)
+			return
+		}
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	token, err := auth.CreateToken(targetUser, time.Minute*15)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	toSendEmail := email.Email{
+		To:          request.Email,
+		Subject:     "Recuperação de senha",
+		ContentType: "text/plain",
+	}
+	email.SendEmailForPasswordReset(toSendEmail, token)
+
+	res.Json(w, http.StatusNoContent, nil)
+}
+
+func ValidateResetPasswordToken(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	err := auth.ValidateToken(token)
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
+}
+
+func ResetPassword(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	var request user.ResetUserPasswordRequest
+
+	if err = json.Unmarshal(body, &request); err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if output := request.Validate(); output.HasErrors() {
+		res.ValidationErrors(w, http.StatusBadRequest, output.Payload)
+		return
+	}
+	err = auth.ValidateToken(request.Token)
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	userId, err := auth.GetUserIdFromToken()
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewUsersRepository(db)
+	hashedPassword, err := security.Cryptify(request.Password)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = repo.RefreshPasswordFromUser(userId, hashedPassword); err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	auth.InvalidateToken()
+
 	res.Json(w, http.StatusNoContent, nil)
 }

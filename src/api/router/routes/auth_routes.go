@@ -26,4 +26,22 @@ var auth = []Route{
 		handler:            controllers.RefreshPassword,
 		MiddlewarePipeline: middlewares.SignPipeline().AddAuthZ(),
 	},
+	{
+		Uri:                "/auth/password/recover",
+		Method:             http.MethodPost,
+		handler:            controllers.RecoverPassword,
+		MiddlewarePipeline: middlewares.SignPipeline(),
+	},
+	{
+		Uri:                "/auth/password/reset",
+		Method:             http.MethodGet,
+		handler:            controllers.ValidateResetPasswordToken,
+		MiddlewarePipeline: middlewares.SignPipeline(),
+	},
+	{
+		Uri:                "/auth/password/reset",
+		Method:             http.MethodPost,
+		handler:            controllers.ResetPassword,
+		MiddlewarePipeline: middlewares.SignPipeline(),
+	},
 }
