@@ -10,7 +10,7 @@ import (
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
 	pkg "github.com/csvitor-dev/social-media/pkg/errors"
-	"github.com/csvitor-dev/social-media/src/api/services/auth"
+	"github.com/csvitor-dev/social-media/src/services/auth"
 	"github.com/gorilla/mux"
 
 	"github.com/csvitor-dev/social-media/pkg/requests/user"

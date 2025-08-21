@@ -8,13 +8,16 @@ import (
 	"github.com/csvitor-dev/social-media/internal/db/migrations"
 )
 
+func init() {
+	config.LoadApiEnv()
+}
+
 func main() {
 	if len(os.Args) < 2 {
 		log.Fatalln("Please provide an argument: 'up', 'down', or 'status'")
 		os.Exit(1)
 	}
 	log.Println("Running database migrations...")
-	config.LoadApiEnv()
 
 	switch os.Args[1] {
 	case "up":

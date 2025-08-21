@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	res "github.com/csvitor-dev/social-media/pkg/responses"
-	"github.com/csvitor-dev/social-media/src/api/services/auth"
+	"github.com/csvitor-dev/social-media/src/services/auth"
 	utils "github.com/csvitor-dev/social-media/utils/http"
 )
 
@@ -19,10 +19,4 @@ func Authorize(next http.HandlerFunc) http.HandlerFunc {
 		}
 		next(w, r)
 	}
-}
-
-func (m *MiddlewarePipeline) AddAuthZ() *MiddlewarePipeline {
-	m.middlewares = append(m.middlewares, Authorize)
-
-	return m
 }

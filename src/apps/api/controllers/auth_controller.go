@@ -13,8 +13,9 @@ import (
 	"github.com/csvitor-dev/social-media/pkg/requests/user"
 	res "github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/pkg/security"
-	"github.com/csvitor-dev/social-media/src/api/services/auth"
-	"github.com/csvitor-dev/social-media/src/api/services/email"
+	"github.com/csvitor-dev/social-media/src/services/auth"
+	"github.com/csvitor-dev/social-media/src/services/email"
+	"github.com/csvitor-dev/social-media/types"
 )
 
 // Register: creates a user and delegates its persistence
@@ -220,7 +221,7 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
-	toSendEmail := email.Email{
+	toSendEmail := types.Email{
 		To:          request.Email,
 		Subject:     "Recuperação de senha",
 		ContentType: "text/plain",

@@ -9,7 +9,7 @@ import (
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
 	pkg "github.com/csvitor-dev/social-media/pkg/errors"
 	res "github.com/csvitor-dev/social-media/pkg/responses"
-	"github.com/csvitor-dev/social-media/src/api/services/auth"
+	"github.com/csvitor-dev/social-media/src/services/auth"
 	"github.com/gorilla/mux"
 )
 

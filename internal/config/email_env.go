@@ -34,5 +34,5 @@ func LoadEmailEnv() {
 	}
 	EmailEnv.EMAIL = fmt.Sprintf("%s <%s>", EmailEnv.USERNAME, EmailEnv.EMAIL)
 
-	log.Println("Email enviroment variables loaded successfully")
+	log.Println("Email enviroment variables loaded successfully!")
 }

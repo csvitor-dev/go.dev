@@ -12,6 +12,7 @@ type ApiEnviroment struct {
 	SECRET_KEY        []byte
 	PORT              string
 	CONNECTION_STRING string
+	WEB_URL           string
 }
 
 var ApiEnv ApiEnviroment
@@ -30,6 +31,8 @@ func LoadApiEnv() {
 			os.Getenv("DB_PASSWORD"),
 			os.Getenv("DB_NAME"),
 		),
+		WEB_URL: os.Getenv("WEB_URL"),
 	}
-	log.Println("API enviroment variables loaded successfully")
+
+	log.Println("API enviroment variables loaded successfully!")
 }
