@@ -31,21 +31,24 @@ var authentication = []types.Route{
 			With(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:                "/auth/password/recover",
-		Method:             http.MethodPost,
-		Handler:            auth.RecoverPassword,
-		MiddlewarePipeline: types.NewPipeline(),
+		Uri:     "/auth/password/recover",
+		Method:  http.MethodPost,
+		Handler: auth.RecoverPassword,
+		MiddlewarePipeline: types.NewPipeline().
+			With(middlewares.Logger),
 	},
 	{
-		Uri:                "/auth/password/reset",
-		Method:             http.MethodGet,
-		Handler:            auth.ValidateResetPasswordToken,
-		MiddlewarePipeline: types.NewPipeline(),
+		Uri:     "/auth/password/reset",
+		Method:  http.MethodGet,
+		Handler: auth.ValidateResetPasswordToken,
+		MiddlewarePipeline: types.NewPipeline().
+			With(middlewares.Logger),
 	},
 	{
-		Uri:                "/auth/password/reset",
-		Method:             http.MethodPost,
-		Handler:            auth.ResetPassword,
-		MiddlewarePipeline: types.NewPipeline(),
+		Uri:     "/auth/password/reset",
+		Method:  http.MethodPost,
+		Handler: auth.ResetPassword,
+		MiddlewarePipeline: types.NewPipeline().
+			With(middlewares.Logger),
 	},
 }

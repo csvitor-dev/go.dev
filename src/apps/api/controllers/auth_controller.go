@@ -222,12 +222,15 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	toSendEmail := types.Email{
-		To:          request.Email,
-		Subject:     "Recuperação de senha",
-		ContentType: "text/plain",
+		To:      request.Email,
+		Subject: "Recuperação de senha",
 	}
-	email.SendEmailForPasswordReset(toSendEmail, token)
+	err = email.SendEmailForPasswordReset(toSendEmail, token)
 
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
 	res.Json(w, http.StatusNoContent, nil)
 }
 
