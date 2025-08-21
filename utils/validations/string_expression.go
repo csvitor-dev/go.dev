@@ -1,9 +1,9 @@
 package validations
 
 import (
+	"encoding/base64"
 	"net/mail"
-
-	"github.com/dgrijalva/jwt-go"
+	"strings"
 )
 
 type StringExpression struct {
@@ -85,15 +85,25 @@ func (exp *StringExpression) JWT() *StringExpression {
 	if exp.isOptional && exp.payload == "" {
 		return exp
 	}
+	segments := strings.Split(exp.payload, ".")
 
-	if _, err := jwt.Parse(
-		exp.payload,
-		func(t *jwt.Token) (any, error) {
-			return nil, nil
-		}); err != nil {
+	err := validateJWTSegments(segments)
+
+	if len(segments) != 3 || err != nil {
 		exp.error("must be a valid JWT format")
 	}
 	return exp
+}
+
+func validateJWTSegments(segments []string) error {
+	for _, segment := range segments {
+		_, err := base64.RawURLEncoding.DecodeString(segment)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (exp *StringExpression) Refine(fn func(input string) (string, error)) *StringExpression {
