@@ -162,3 +162,35 @@ func DeleteUserById(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Json(w, http.StatusNoContent, nil)
 }
+
+// GetAuthUser: ...
+func GetAuthUser(w http.ResponseWriter, r *http.Request) {
+	authUserId, err := auth.GetUserIdFromToken()
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewUsersRepository(db)
+	user, err := repo.FindById(authUserId)
+
+	if err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrUserNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusInternalServerError
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+	res.Json(w, http.StatusOK, user)
+}

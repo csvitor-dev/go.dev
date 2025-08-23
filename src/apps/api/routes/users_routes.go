@@ -17,6 +17,13 @@ var user = []types.Route{
 			With(middlewares.Logger, middlewares.Authorize),
 	},
 	{
+		Uri:     "/users/me",
+		Method:  http.MethodGet,
+		Handler: users.GetAuthUser,
+		MiddlewarePipeline: types.NewPipeline().
+			With(middlewares.Logger, middlewares.Authorize),
+	},
+	{
 		Uri:     "/users/{id}",
 		Method:  http.MethodGet,
 		Handler: users.GetUserById,
