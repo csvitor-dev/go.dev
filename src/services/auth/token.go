@@ -17,7 +17,6 @@ var currentJti string
 func CreateToken(user models.User, duration time.Duration) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id":    user.Id,
-		"email":      user.Email,
 		"authorized": true,
 		"jti":        uuid.NewString(),
 		"exp":        time.Now().Add(duration).Unix(),
@@ -46,10 +45,14 @@ func ValidateToken(token string) error {
 		return err
 	}
 	claims, ok := refinedToken.Claims.(jwt.MapClaims)
+
+	if !ok || !refinedToken.Valid {
+		return errors.New("auth: invalid token")
+	}
 	jti, _ := claims["jti"].(string)
 
-	if !ok || !refinedToken.Valid || !isCurrentToken(jti) {
-		return errors.New("auth: invalid token")
+	if !isCurrentToken(jti) {
+		return errors.New("auth: token has been invalidate")
 	}
 	return nil
 }
