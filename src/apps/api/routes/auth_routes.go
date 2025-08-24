@@ -38,9 +38,9 @@ var authentication = []types.Route{
 			With(middlewares.Logger),
 	},
 	{
-		Uri:     "/auth/password/reset",
+		Uri:     "/auth/verify-token",
 		Method:  http.MethodGet,
-		Handler: auth.ValidateResetPasswordToken,
+		Handler: auth.VerifyToken,
 		MiddlewarePipeline: types.NewPipeline().
 			With(middlewares.Logger),
 	},

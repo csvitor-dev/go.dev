@@ -16,6 +16,7 @@ import (
 	"github.com/csvitor-dev/social-media/src/services/auth"
 	"github.com/csvitor-dev/social-media/src/services/email"
 	"github.com/csvitor-dev/social-media/types"
+	utils "github.com/csvitor-dev/social-media/utils/http"
 )
 
 // Register: creates a user and delegates its persistence
@@ -234,8 +235,8 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 	res.Json(w, http.StatusNoContent, nil)
 }
 
-func ValidateResetPasswordToken(w http.ResponseWriter, r *http.Request) {
-	token := r.URL.Query().Get("token")
+func VerifyToken(w http.ResponseWriter, r *http.Request) {
+	token := utils.ExtractToken(r)
 	err := auth.ValidateToken(token)
 
 	if err != nil {
