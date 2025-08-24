@@ -28,7 +28,7 @@ func CreateToken(user models.User, duration time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	scopeToken = token
 
-	return token.SignedString(config.ApiEnv.SECRET_KEY)
+	return token.SignedString(config.Env.SECRET_KEY)
 }
 
 func ValidateToken(token string) error {
@@ -38,7 +38,7 @@ func ValidateToken(token string) error {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("auth: signing method mismatch: %v", t.Method.Alg())
 			}
-			return config.ApiEnv.SECRET_KEY, nil
+			return config.Env.SECRET_KEY, nil
 		})
 
 	if err != nil {

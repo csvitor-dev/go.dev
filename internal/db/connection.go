@@ -8,7 +8,7 @@ import (
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", config.ApiEnv.CONNECTION_STRING)
+	db, err := sql.Open("mysql", config.Env.CONNECTION_STRING)
 
 	if err != nil {
 		return nil, err

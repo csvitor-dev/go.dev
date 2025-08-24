@@ -11,7 +11,7 @@ import (
 )
 
 func getMigratorInstance() (*migrate.Migrate, error) {
-	url := fmt.Sprintf("mysql://%s", config.ApiEnv.CONNECTION_STRING)
+	url := fmt.Sprintf("mysql://%s", config.Env.CONNECTION_STRING)
 	migrator, err := migrate.New(
 		"file://internal/db/migrations",
 		url,
