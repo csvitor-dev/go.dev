@@ -10,6 +10,7 @@ import (
 )
 
 func init() {
+	config.LoadGeneralEnv()
 	config.LoadApiEnv()
 	config.LoadEmailEnv()
 }

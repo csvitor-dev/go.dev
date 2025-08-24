@@ -7,11 +7,11 @@ import (
 	env "github.com/joho/godotenv"
 )
 
-type WebEnviroment struct {
+type WebEnvironment struct {
 	PORT string
 }
 
-var WebEnv WebEnviroment
+var WebEnv WebEnvironment
 
 func LoadWebEnv() {
 	var err error
@@ -19,9 +19,9 @@ func LoadWebEnv() {
 	if err = env.Load(".env.web"); err != nil {
 		log.Fatal(err)
 	}
-	WebEnv = WebEnviroment{
+	WebEnv = WebEnvironment{
 		PORT: os.Getenv("WEB_PORT"),
 	}
 
-	log.Println("Web enviroment variables loaded successfully!")
+	log.Println("Web environment variables loaded successfully!")
 }

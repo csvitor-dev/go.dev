@@ -7,13 +7,13 @@ import (
 	env "github.com/joho/godotenv"
 )
 
-// SMTPConfig: SMTP server configuration
-type SMTPEnviroment struct {
+// EmailEnvironment: SMTP server configuration
+type EmailEnvironment struct {
 	EMAIL   string
 	API_KEY string
 }
 
-var EmailEnv SMTPEnviroment
+var EmailEnv EmailEnvironment
 
 func LoadEmailEnv() {
 	var err error
@@ -21,10 +21,10 @@ func LoadEmailEnv() {
 	if err = env.Load(".env.email"); err != nil {
 		log.Fatal(err)
 	}
-	EmailEnv = SMTPEnviroment{
+	EmailEnv = EmailEnvironment{
 		EMAIL:   os.Getenv("EMAIL_SENDER"),
 		API_KEY: os.Getenv("RESEND_API_KEY"),
 	}
 
-	log.Println("Email enviroment variables loaded successfully!")
+	log.Println("Email environment variables loaded successfully!")
 }

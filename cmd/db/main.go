@@ -9,7 +9,7 @@ import (
 )
 
 func init() {
-	config.LoadApiEnv()
+	config.LoadGeneralEnv()
 }
 
 func main() {
