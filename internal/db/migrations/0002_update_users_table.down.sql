@@ -1,4 +1,4 @@
 USE socialdb;
 
 ALTER TABLE users
-    DROP COLUMN updated_on TIMESTAMP DEFAULT CURRENT_TIMESTAMP();
+    DROP COLUMN updated_on;

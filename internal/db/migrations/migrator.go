@@ -67,3 +67,12 @@ func Status() (string, error) {
 	status := fmt.Sprintf("Version: %d, Dirty: %s", version, strconv.FormatBool(dirty))
 	return status, nil
 }
+
+func Force(version int) error {
+	migrator, err := getMigratorInstance()
+
+	if err != nil {
+		return err
+	}
+	return migrator.Force(version)
+}
