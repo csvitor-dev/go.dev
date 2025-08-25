@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
 	pkg "github.com/csvitor-dev/social-media/pkg/errors"
+	"github.com/csvitor-dev/social-media/pkg/requests"
 	"github.com/csvitor-dev/social-media/pkg/requests/user"
 	res "github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/pkg/security"
@@ -28,16 +28,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.RegisterUserRequest
-
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if errs := request.Validate(); errs.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
-		return
-	}
+	requests.MapToRequest(w, &request, body)
 	user, err := request.Map()
 
 	if err != nil {
@@ -71,16 +62,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.LoginUserRequest
+	requests.MapToRequest(w, &request, body)
 
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if errs := request.Validate(); errs.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
-		return
-	}
 	db, err := db.Connect()
 
 	if err != nil {
@@ -126,16 +109,8 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.RefreshUserPasswordRequest
+	requests.MapToRequest(w, &request, body)
 
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if errs := request.Validate(); errs.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
-		return
-	}
 	db, err := db.Connect()
 
 	if err != nil {
@@ -188,16 +163,8 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.RecoverUserPasswordRequest
+	requests.MapToRequest(w, &request, body)
 
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if output := request.Validate(); output.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, output.Payload)
-		return
-	}
 	db, err := db.Connect()
 
 	if err != nil {
@@ -254,16 +221,8 @@ func ResetPassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.ResetUserPasswordRequest
+	requests.MapToRequest(w, &request, body)
 
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if output := request.Validate(); output.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, output.Payload)
-		return
-	}
 	err = auth.ValidateToken(request.Token)
 
 	if err != nil {

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
 	pkg "github.com/csvitor-dev/social-media/pkg/errors"
+	"github.com/csvitor-dev/social-media/pkg/requests"
 	"github.com/csvitor-dev/social-media/src/services/auth"
 	"github.com/gorilla/mux"
 
@@ -96,16 +96,7 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var request user.UpdateUserRequest
-
-	if err = json.Unmarshal(body, &request); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if errs := request.Validate(); errs.HasErrors() {
-		res.ValidationErrors(w, http.StatusBadRequest, errs.Payload)
-		return
-	}
+	requests.MapToRequest(w, &request, body)
 	user, err := request.Map()
 
 	if err != nil {
