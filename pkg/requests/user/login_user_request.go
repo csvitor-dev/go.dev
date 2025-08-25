@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/csvitor-dev/social-media/pkg/requests"
+	"github.com/csvitor-dev/social-media/types"
 	"github.com/csvitor-dev/social-media/utils/validations"
 )
 
@@ -10,10 +10,10 @@ type LoginUserRequest struct {
 	Password string `json:"password"`
 }
 
-func (r *LoginUserRequest) Validate() requests.RequestOutput {
+func (r *LoginUserRequest) Validate() types.RequestValidationGuard {
 	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email().Result()
 
 	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
 
-	return requests.GenerateOutput(emailErrors, passwordErrors)
+	return types.Throw(emailErrors, passwordErrors)
 }

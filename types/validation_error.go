@@ -1,4 +1,4 @@
-package validations
+package types
 
 import (
 	"errors"
@@ -10,11 +10,11 @@ type ValidationError struct {
 	Errors    []error
 }
 
-func (e *ValidationError) error(message string) {
+func (e *ValidationError) Error(message string) {
 	e.Errors = append(e.Errors, errors.New(message))
 }
 
-func (e *ValidationError) errorf(format string, args ...any) {
+func (e *ValidationError) Errorf(format string, args ...any) {
 	message := fmt.Sprintf(format, args...)
-	e.error(message)
+	e.Error(message)
 }

@@ -4,10 +4,12 @@ import (
 	"encoding/base64"
 	"net/mail"
 	"strings"
+
+	"github.com/csvitor-dev/social-media/types"
 )
 
 type StringExpression struct {
-	*ValidationError
+	*types.ValidationError
 	payload    string
 	isOptional bool
 }
@@ -15,7 +17,7 @@ type StringExpression struct {
 func NewString(input, fieldName string) *StringExpression {
 	return &StringExpression{
 		payload: input,
-		ValidationError: &ValidationError{
+		ValidationError: &types.ValidationError{
 			FieldName: fieldName,
 		},
 	}
@@ -32,7 +34,7 @@ func (exp *StringExpression) IsNotEmpty() *StringExpression {
 	}
 
 	if exp.payload == "" {
-		exp.error("cannot be empty")
+		exp.Error("cannot be empty")
 	}
 	return exp
 }
@@ -43,7 +45,7 @@ func (exp *StringExpression) MinLength(min int) *StringExpression {
 	}
 
 	if len(exp.payload) < min {
-		exp.errorf("must be at least %d characters long", min)
+		exp.Errorf("must be at least %d characters long", min)
 	}
 	return exp
 }
@@ -54,7 +56,7 @@ func (exp *StringExpression) MaxLength(max int) *StringExpression {
 	}
 
 	if len(exp.payload) > max {
-		exp.errorf("must be at most %d characters long", max)
+		exp.Errorf("must be at most %d characters long", max)
 	}
 	return exp
 }
@@ -65,7 +67,7 @@ func (exp *StringExpression) Between(min, max int) *StringExpression {
 	}
 
 	if len(exp.payload) < min || len(exp.payload) > max {
-		exp.errorf("must be between %d and %d characters long", min, max)
+		exp.Errorf("must be between %d and %d characters long", min, max)
 	}
 	return exp
 }
@@ -76,7 +78,7 @@ func (exp *StringExpression) Email() *StringExpression {
 	}
 
 	if _, err := mail.ParseAddress(exp.payload); err != nil {
-		exp.error("must be a valid email address")
+		exp.Error("must be a valid email address")
 	}
 	return exp
 }
@@ -90,7 +92,7 @@ func (exp *StringExpression) JWT() *StringExpression {
 	err := validateJWTSegments(segments)
 
 	if len(segments) != 3 || err != nil {
-		exp.error("must be a valid JWT format")
+		exp.Error("must be a valid JWT format")
 	}
 	return exp
 }
@@ -113,12 +115,12 @@ func (exp *StringExpression) Refine(fn func(input string) (string, error)) *Stri
 	value, err := fn(exp.payload)
 
 	if err != nil {
-		exp.error(err.Error())
+		exp.Error(err.Error())
 	}
 	exp.payload = value
 	return exp
 }
 
-func (exp *StringExpression) Result() *ValidationError {
+func (exp *StringExpression) Result() *types.ValidationError {
 	return exp.ValidationError
 }

@@ -1,12 +1,10 @@
-package requests
+package types
 
-import "github.com/csvitor-dev/social-media/utils/validations"
-
-type RequestOutput struct {
+type RequestValidationGuard struct {
 	Payload map[string][]error
 }
 
-func (r *RequestOutput) HasErrors() bool {
+func (r *RequestValidationGuard) HasErrors() bool {
 	for _, errors := range r.Payload {
 		if len(errors) > 0 {
 			return true
@@ -15,7 +13,7 @@ func (r *RequestOutput) HasErrors() bool {
 	return false
 }
 
-func GenerateOutput(fields ...*validations.ValidationError) RequestOutput {
+func Throw(fields ...*ValidationError) RequestValidationGuard {
 	result := map[string][]error{}
 
 	for _, field := range fields {
@@ -23,7 +21,7 @@ func GenerateOutput(fields ...*validations.ValidationError) RequestOutput {
 			result[field.FieldName] = field.Errors
 		}
 	}
-	return RequestOutput{
+	return RequestValidationGuard{
 		Payload: result,
 	}
 }
