@@ -58,7 +58,7 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrUserNotFound) {
+		if errors.Is(err, pkg.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -176,7 +176,7 @@ func GetAuthUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrUserNotFound) {
+		if errors.Is(err, pkg.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError

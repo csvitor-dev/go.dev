@@ -124,7 +124,7 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrUserNotFound) {
+		if errors.Is(err, pkg.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -176,7 +176,7 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 	targetUser, err := repo.FindByEmail(request.Email)
 
 	if err != nil {
-		if errors.Is(err, pkg.ErrUserNotFound) {
+		if errors.Is(err, pkg.ErrModelNotFound) {
 			res.Json(w, http.StatusNoContent, nil)
 			return
 		}
