@@ -107,6 +107,7 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		res.SingleError(w, http.StatusInternalServerError, err)
+		return
 	}
 	defer db.Close()
 	repo := repos.NewUsersRepository(db)
