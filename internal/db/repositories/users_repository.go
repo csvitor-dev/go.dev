@@ -62,7 +62,7 @@ func (repo *Users) FindById(id uint64) (models.User, error) {
 	defer rows.Close()
 
 	if !rows.Next() {
-		return models.User{}, errors.ErrUserNotFound
+		return models.User{}, errors.ErrModelNotFound
 	}
 	var user models.User
 
@@ -88,7 +88,7 @@ func (repo *Users) FindByEmail(email string) (models.User, error) {
 	defer rows.Close()
 
 	if !rows.Next() {
-		return models.User{}, errors.ErrUserNotFound
+		return models.User{}, errors.ErrModelNotFound
 	}
 	var user models.User
 
@@ -181,7 +181,7 @@ func (repo *Users) FindPasswordFromUser(id uint64) (string, error) {
 	defer rows.Close()
 
 	if !rows.Next() {
-		return "", errors.ErrUserNotFound
+		return "", errors.ErrModelNotFound
 	}
 	var password string
 	err = rows.Scan(&password)

@@ -1,15 +1,19 @@
 package controllers
 
 import (
+	"errors"
 	"io"
 	"net/http"
+	"strconv"
 
 	"github.com/csvitor-dev/social-media/internal/db"
 	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
+	pkg "github.com/csvitor-dev/social-media/pkg/errors"
 	"github.com/csvitor-dev/social-media/pkg/requests"
 	"github.com/csvitor-dev/social-media/pkg/requests/publication"
 	res "github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/src/services/auth"
+	"github.com/gorilla/mux"
 )
 
 func Publish(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +62,34 @@ func GetAllPubs(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetPubById(w http.ResponseWriter, r *http.Request) {
+	pubId, err := strconv.ParseUint(mux.Vars(r)["pubId"], 10, 64)
 
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+	pub, err := repo.FindById(pubId)
+
+	if err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrModelNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusInternalServerError
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+	res.Json(w, http.StatusOK, pub)
 }
 
 func UpdatePubById(w http.ResponseWriter, r *http.Request) {
