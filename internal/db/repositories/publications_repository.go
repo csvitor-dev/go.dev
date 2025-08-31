@@ -114,6 +114,43 @@ func (repo *Publications) SearchPubsByUserId(userId uint64) ([]models.Publicatio
 	return publications, nil
 }
 
+func (repo *Publications) FilterPubsByUserId(userId uint64) ([]models.Publication, error) {
+	rows, err := repo.db.Query(`
+		SELECT p.*, u.nickname
+		FROM publications p
+		INNER JOIN users u
+		ON p.author_id = u.id
+		WHERE p.author_id = ?
+		ORDER BY 1 DESC;`,
+		userId,
+	)
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	publications := make([]models.Publication, 0)
+
+	for rows.Next() {
+		var pub models.Publication
+
+		if err = rows.Scan(
+			&pub.Id,
+			&pub.Title,
+			&pub.Content,
+			&pub.Likes,
+			&pub.AuthorId,
+			&pub.CreatedOn,
+			&pub.UpdatedOn,
+			&pub.AuthorNickName,
+		); err != nil {
+			return nil, err
+		}
+		publications = append(publications, pub)
+	}
+	return publications, nil
+}
+
 func (repo *Publications) IsAuthorOfPub(userId, pubId uint64) error {
 	pub, err := repo.FindById(pubId)
 

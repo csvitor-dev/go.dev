@@ -207,3 +207,27 @@ func DeletePubById(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Json(w, http.StatusNoContent, nil)
 }
+
+func GetAllPubsForUser(w http.ResponseWriter, r *http.Request) {
+	userId, err := strconv.ParseUint(mux.Vars(r)["userId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+	pubs, err := repo.FilterPubsByUserId(userId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusOK, pubs)
+}
