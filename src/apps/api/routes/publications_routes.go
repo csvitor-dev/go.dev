@@ -45,6 +45,13 @@ var publications = []types.Route{
 			With(middlewares.Logger, middlewares.Authorize),
 	},
 	{
+		Uri:     "/pubs/user/{userId}",
+		Method:  http.MethodGet,
+		Handler: pubs.GetAllPubsForUser,
+		MiddlewarePipeline: types.NewPipeline().
+			With(middlewares.Logger, middlewares.Authorize),
+	},
+	{
 		Uri:     "/pubs/{pubId}/like",
 		Method:  http.MethodPost,
 		Handler: pubs.Like,
