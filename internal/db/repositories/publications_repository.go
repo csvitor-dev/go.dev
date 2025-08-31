@@ -195,3 +195,54 @@ func (repo *Publications) Delete(pubId uint64) error {
 
 	return err
 }
+
+func (repo *Publications) Like(pubId uint64) error {
+	statement, err := repo.db.Prepare(
+		"UPDATE publications SET likes = likes + 1 WHERE id = ?;",
+	)
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	result, err := statement.Exec(pubId)
+
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return errs.ErrModelNotFound
+	}
+	return err
+}
+
+func (repo *Publications) Dislike(pubId uint64) error {
+	statement, err := repo.db.Prepare(`
+		UPDATE publications
+		SET likes = 
+		CASE
+			WHEN likes > 0
+			THEN likes - 1
+			ELSE 0
+		END
+		WHERE id = ?;
+	`)
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	result, err := statement.Exec(pubId)
+
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+
+	if rowsAffected == 0 {
+		return errs.ErrModelNotFound
+	}
+	return err
+}

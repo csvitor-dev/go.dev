@@ -231,3 +231,63 @@ func GetAllPubsForUser(w http.ResponseWriter, r *http.Request) {
 	}
 	res.Json(w, http.StatusOK, pubs)
 }
+
+func Like(w http.ResponseWriter, r *http.Request) {
+	pubId, err := strconv.ParseUint(mux.Vars(r)["pubId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+
+	if err := repo.Like(pubId); err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrModelNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusInternalServerError
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
+}
+
+func Dislike(w http.ResponseWriter, r *http.Request) {
+	pubId, err := strconv.ParseUint(mux.Vars(r)["pubId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+
+	if err := repo.Dislike(pubId); err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrModelNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusInternalServerError
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
+}
