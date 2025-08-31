@@ -113,7 +113,58 @@ func GetPubById(w http.ResponseWriter, r *http.Request) {
 }
 
 func UpdatePubById(w http.ResponseWriter, r *http.Request) {
+	authUserId, err := auth.GetUserIdFromToken()
 
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	pubId, err := strconv.ParseUint(mux.Vars(r)["pubId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+
+	if err := repo.IsAuthorOfPub(authUserId, pubId); err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrModelNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusForbidden
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		res.SingleError(w, http.StatusUnprocessableEntity, err)
+		return
+	}
+	var request publication.UpdatePubRequest
+	requests.MapToRequest(w, &request, body)
+	pub, err := request.Map(authUserId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	if err := repo.Update(pubId, pub); err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
 }
 
 func DeletePubById(w http.ResponseWriter, r *http.Request) {

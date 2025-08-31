@@ -2,9 +2,10 @@ package repositories
 
 import (
 	"database/sql"
+	"errors"
 
 	"github.com/csvitor-dev/social-media/internal/models"
-	"github.com/csvitor-dev/social-media/pkg/errors"
+	errs "github.com/csvitor-dev/social-media/pkg/errors"
 )
 
 type Publications struct {
@@ -56,7 +57,7 @@ func (repo *Publications) FindById(id uint64) (models.Publication, error) {
 	defer rows.Close()
 
 	if !rows.Next() {
-		return models.Publication{}, errors.ErrModelNotFound
+		return models.Publication{}, errs.ErrModelNotFound
 	}
 	var pub models.Publication
 
@@ -81,7 +82,7 @@ func (repo *Publications) SearchPubsByUserId(userId uint64) ([]models.Publicatio
 		ON p.author_id = u.id
 		LEFT JOIN followers f
 		ON p.author_id = f.user_id
-		WHERE p.author_id = ? or f.follower_id = ?
+		WHERE p.author_id = ? OR f.follower_id = ?
 		ORDER BY 1 DESC;`,
 		userId,
 		userId,
@@ -111,4 +112,35 @@ func (repo *Publications) SearchPubsByUserId(userId uint64) ([]models.Publicatio
 		publications = append(publications, pub)
 	}
 	return publications, nil
+}
+
+func (repo *Publications) IsAuthorOfPub(userId, pubId uint64) error {
+	pub, err := repo.FindById(pubId)
+
+	if err != nil {
+		return err
+	}
+
+	if pub.AuthorId != userId {
+		return errors.New("controllers: you are not the author of this publication")
+	}
+	return nil
+}
+
+func (repo *Publications) Update(pubId uint64, publication models.Publication) error {
+	statement, err := repo.db.Prepare(
+		"UPDATE publications SET title = ?, content = ? WHERE id = ?;",
+	)
+
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+	_, err = statement.Exec(
+		publication.Title,
+		publication.Content,
+		pubId,
+	)
+
+	return err
 }
