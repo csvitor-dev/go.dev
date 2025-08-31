@@ -168,5 +168,42 @@ func UpdatePubById(w http.ResponseWriter, r *http.Request) {
 }
 
 func DeletePubById(w http.ResponseWriter, r *http.Request) {
+	authUserId, err := auth.GetUserIdFromToken()
 
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	pubId, err := strconv.ParseUint(mux.Vars(r)["pubId"], 10, 64)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+
+	if err := repo.IsAuthorOfPub(authUserId, pubId); err != nil {
+		var status int
+
+		if errors.Is(err, pkg.ErrModelNotFound) {
+			status = http.StatusNotFound
+		} else {
+			status = http.StatusForbidden
+		}
+		res.SingleError(w, status, err)
+		return
+	}
+
+	if err := repo.Delete(pubId); err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
 }
