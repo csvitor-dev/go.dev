@@ -58,7 +58,27 @@ func Publish(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetAllPubs(w http.ResponseWriter, r *http.Request) {
+	authUserId, err := auth.GetUserIdFromToken()
 
+	if err != nil {
+		res.SingleError(w, http.StatusUnauthorized, err)
+		return
+	}
+	db, err := db.Connect()
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+	repo := repos.NewPublicationsRepository(db)
+	pubs, err := repo.SearchPubsByUserId(authUserId)
+
+	if err != nil {
+		res.SingleError(w, http.StatusInternalServerError, err)
+		return
+	}
+	res.Json(w, http.StatusOK, pubs)
 }
 
 func GetPubById(w http.ResponseWriter, r *http.Request) {
