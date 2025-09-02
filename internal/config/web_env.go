@@ -8,7 +8,8 @@ import (
 )
 
 type WebEnvironment struct {
-	PORT string
+	PORT    string
+	API_URL string
 }
 
 var WebEnv WebEnvironment
@@ -20,7 +21,8 @@ func LoadWebEnv() {
 		log.Fatal(err)
 	}
 	WebEnv = WebEnvironment{
-		PORT: os.Getenv("WEB_PORT"),
+		PORT:    os.Getenv("WEB_PORT"),
+		API_URL: os.Getenv("API_URL"),
 	}
 
 	log.Println("Web environment variables loaded successfully!")

@@ -1,7 +1,6 @@
 package views
 
 import (
-	"errors"
 	"net/http"
 	"strings"
 
@@ -9,14 +8,9 @@ import (
 )
 
 func Render(w http.ResponseWriter, status int, view string, data map[string]any) {
-	folder, fileName, err := getViewPattern(view)
+	path, fileName := getViewPattern(view)
 
-	if err != nil {
-		res.ErrorView(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	template, err := LoadTemplateFrom(folder, fileName)
+	template, err := LoadTemplateFrom(path, fileName)
 
 	if err != nil {
 		res.ErrorView(w, "Error loading template: "+err.Error(), http.StatusInternalServerError)
@@ -29,11 +23,10 @@ func Render(w http.ResponseWriter, status int, view string, data map[string]any)
 	}
 }
 
-func getViewPattern(view string) (string, string, error) {
+func getViewPattern(view string) (string, string) {
 	parts := strings.Split(view, ".")
+	lastIndex := len(parts) - 1
+	path := strings.Join(parts[:lastIndex], "/")
 
-	if len(parts) != 2 {
-		return "", "", errors.New("views: invalid view format, expected 'folder.filename'")
-	}
-	return parts[0], parts[1], nil
+	return path, parts[lastIndex]
 }
