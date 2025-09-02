@@ -5,12 +5,12 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/csvitor-dev/social-media/internal/db/migrations"
 )
 
 func init() {
-	config.LoadGeneralEnv()
+	env.LoadGeneralEnv()
 }
 
 func main() {

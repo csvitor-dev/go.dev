@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/csvitor-dev/social-media/src/services/clients/api"
 	utils "github.com/csvitor-dev/social-media/utils/http"
 )
@@ -17,7 +17,7 @@ func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 			utils.Redirect(w, r, "/auth/login?err=You+are+not+authenticated", http.StatusSeeOther)
 			return
 		}
-		client := api.NewApiClient(config.WebEnv.API_URL).WithToken(cookie.Value)
+		client := api.NewApiClient(env.WebEnv.API_URL).WithToken(cookie.Value)
 
 		if _, err := api.ExecuteRequest[any](
 			client,

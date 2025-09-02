@@ -3,12 +3,12 @@ package db
 import (
 	"database/sql"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func Connect() (*sql.DB, error) {
-	db, err := sql.Open("mysql", config.Env.CONNECTION_STRING)
+	db, err := sql.Open("mysql", env.Env.CONNECTION_STRING)
 
 	if err != nil {
 		return nil, err

@@ -4,15 +4,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/csvitor-dev/social-media/src/apps/web/routes"
 	"github.com/csvitor-dev/social-media/src/router"
 	"github.com/gorilla/mux"
 )
 
 func init() {
-	config.LoadGeneralEnv()
-	config.LoadWebEnv()
+	env.LoadGeneralEnv()
+	env.LoadWebEnv()
 }
 
 func main() {
@@ -22,6 +22,6 @@ func main() {
 			router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fileServer))
 		})
 
-	log.Printf("Listening on port '%s'\n", config.WebEnv.PORT)
-	log.Fatalln(http.ListenAndServe(config.WebEnv.PORT, r))
+	log.Printf("Listening on port '%s'\n", env.WebEnv.PORT)
+	log.Fatalln(http.ListenAndServe(env.WebEnv.PORT, r))
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/csvitor-dev/social-media/internal/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
@@ -28,7 +28,7 @@ func CreateToken(user models.User, duration time.Duration) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	scopeToken = token
 
-	return token.SignedString(config.Env.SECRET_KEY)
+	return token.SignedString(env.Env.SECRET_KEY)
 }
 
 func ValidateToken(token string) error {
@@ -38,7 +38,7 @@ func ValidateToken(token string) error {
 			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("auth: signing method mismatch: %v", t.Method.Alg())
 			}
-			return config.Env.SECRET_KEY, nil
+			return env.Env.SECRET_KEY, nil
 		})
 
 	if err != nil {

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/csvitor-dev/social-media/types"
 	"github.com/resend/resend-go/v2"
 )
 
 func SendEmailForPasswordReset(email types.Email, token string) error {
-	resetLink := fmt.Sprintf("%s/auth/reset-password?token=%s", config.ApiEnv.WEB_URL, token)
+	resetLink := fmt.Sprintf("%s/auth/reset-password?token=%s", env.ApiEnv.WEB_URL, token)
 
 	email.Body = fmt.Sprintf(`
 		<h2>Recuperação de senha</h2>
@@ -24,9 +24,9 @@ func SendEmailForPasswordReset(email types.Email, token string) error {
 		<p>Se não foi você que solicitou, apenas ignore este email.</p>
 	`, resetLink)
 
-	client := resend.NewClient(config.EmailEnv.API_KEY)
+	client := resend.NewClient(env.EmailEnv.API_KEY)
 	params := &resend.SendEmailRequest{
-		From:    config.EmailEnv.EMAIL,
+		From:    env.EmailEnv.EMAIL,
 		To:      []string{email.To},
 		Html:    email.Body,
 		Subject: email.Subject,

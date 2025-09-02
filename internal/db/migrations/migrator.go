@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/csvitor-dev/social-media/internal/config"
+	"github.com/csvitor-dev/social-media/internal/config/env"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/mysql"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func getMigratorInstance() (*migrate.Migrate, error) {
-	url := fmt.Sprintf("mysql://%s", config.Env.CONNECTION_STRING)
+	url := fmt.Sprintf("mysql://%s", env.Env.CONNECTION_STRING)
 	migrator, err := migrate.New(
 		"file://internal/db/migrations",
 		url,
