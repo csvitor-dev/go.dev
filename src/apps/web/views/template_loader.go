@@ -3,22 +3,16 @@ package views
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"path/filepath"
 )
 
-var templates *template.Template
-
-func LoadTemplates() {
+func LoadTemplateFrom(folder, fileName string) (*template.Template, error) {
 	basePath, err := filepath.Abs("./src/apps/web/views")
 
 	if err != nil {
-		log.Fatalf("No such path: %v\n", basePath)
+		return nil, err
 	}
-	pattern := fmt.Sprintf("%s/**/*.html", basePath)
-	templatesTemp := template.Must(template.ParseGlob(pattern))
+	pattern := fmt.Sprintf("%s/%s/%s.html", basePath, folder, fileName)
 
-	templates = templatesTemp
-
-	log.Println("Templates loaded successfully!")
+	return template.ParseFiles(pattern)
 }

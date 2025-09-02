@@ -6,14 +6,12 @@ import (
 
 	"github.com/csvitor-dev/social-media/internal/config"
 	"github.com/csvitor-dev/social-media/src/apps/web/routes"
-	"github.com/csvitor-dev/social-media/src/apps/web/views"
 	"github.com/csvitor-dev/social-media/src/router"
 )
 
 func init() {
 	config.LoadGeneralEnv()
 	config.LoadWebEnv()
-	views.LoadTemplates()
 }
 
 func main() {
