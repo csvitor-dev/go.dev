@@ -11,9 +11,8 @@ type LoginUserRequest struct {
 }
 
 func (r *LoginUserRequest) Validate() types.RequestValidationGuard {
-	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email().Result()
+	email := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email()
+	password := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25)
 
-	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
-
-	return types.Throw(emailErrors, passwordErrors)
+	return types.Throw(email, password)
 }

@@ -12,11 +12,10 @@ type CreatePubRequest struct {
 }
 
 func (r *CreatePubRequest) Validate() types.RequestValidationGuard {
-	titleErrors := validations.NewString(r.Title, "title").IsNotEmpty().MaxLength(100).Result()
+	title := validations.NewString(r.Title, "title").IsNotEmpty().MaxLength(100).TrimRefine()
+	content := validations.NewString(r.Content, "content").IsNotEmpty().MaxLength(300).TrimRefine()
 
-	contentErrors := validations.NewString(r.Content, "content").IsNotEmpty().MaxLength(300).Result()
-
-	return types.Throw(titleErrors, contentErrors)
+	return types.Throw(title, content)
 }
 
 func (r *CreatePubRequest) Map(authorId uint64) (models.Publication, error) {

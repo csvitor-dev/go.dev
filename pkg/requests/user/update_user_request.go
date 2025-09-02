@@ -13,13 +13,19 @@ type UpdateUserRequest struct {
 }
 
 func (r *UpdateUserRequest) Validate() types.RequestValidationGuard {
-	nameErrors := validations.NewString(r.Name, "name").IsOptional().Between(3, 50).Result()
+	name := validations.NewString(r.Name, "name").IsOptional().Between(3, 50).TrimRefine()
+	nickname := validations.NewString(r.Nickname, "nickname").IsOptional().Between(3, 50).TrimRefine()
+	email := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email()
 
-	nickErrors := validations.NewString(r.Nickname, "nickname").IsOptional().Between(3, 50).Result()
-
-	emailErrors := validations.NewString(r.Email, "email").IsOptional().Between(12, 50).Email().Result()
-
-	return types.Throw(nameErrors, nickErrors, emailErrors)
+	if optional := validations.
+		AllOptionalExpressionsAreValid(
+			name,
+			nickname,
+			email,
+		); optional != nil {
+		return types.Throw(optional)
+	}
+	return types.Throw(name, nickname, email)
 }
 
 func (r *UpdateUserRequest) Map() (models.User, error) {

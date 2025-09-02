@@ -14,15 +14,12 @@ type RegisterUserRequest struct {
 }
 
 func (r *RegisterUserRequest) Validate() types.RequestValidationGuard {
-	nameErrors := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).Result()
+	name := validations.NewString(r.Name, "name").IsNotEmpty().Between(3, 50).TrimRefine()
+	nick := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).TrimRefine()
+	email := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email()
+	password := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25)
 
-	nickErrors := validations.NewString(r.Nickname, "nickname").IsNotEmpty().Between(3, 50).Result()
-
-	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email().Result()
-
-	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
-
-	return types.Throw(nameErrors, nickErrors, emailErrors, passwordErrors)
+	return types.Throw(name, nick, email, password)
 }
 
 func (r *RegisterUserRequest) Map() (models.User, error) {

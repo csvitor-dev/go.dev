@@ -11,8 +11,8 @@ type ResetUserPasswordRequest struct {
 }
 
 func (r *ResetUserPasswordRequest) Validate() types.RequestValidationGuard {
-	tokenErrors := validations.NewString(r.Token, "token").IsNotEmpty().JWT().Result()
-	passwordErrors := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25).Result()
+	token := validations.NewString(r.Token, "token").IsNotEmpty().JWT()
+	password := validations.NewString(r.Password, "password").IsNotEmpty().Between(8, 25)
 
-	return types.Throw(tokenErrors, passwordErrors)
+	return types.Throw(token, password)
 }

@@ -10,7 +10,7 @@ type RecoverUserPasswordRequest struct {
 }
 
 func (r *RecoverUserPasswordRequest) Validate() types.RequestValidationGuard {
-	emailErrors := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email().Result()
+	email := validations.NewString(r.Email, "email").IsNotEmpty().Between(12, 50).Email()
 
-	return types.Throw(emailErrors)
+	return types.Throw(email)
 }

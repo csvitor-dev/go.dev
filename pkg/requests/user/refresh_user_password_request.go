@@ -11,10 +11,8 @@ type RefreshUserPasswordRequest struct {
 }
 
 func (r *RefreshUserPasswordRequest) Validate() types.RequestValidationGuard {
-	currentErrors := validations.NewString(r.CurrentPassword, "current").IsNotEmpty().
-		Between(8, 25).Result()
+	current := validations.NewString(r.CurrentPassword, "current").IsNotEmpty().Between(8, 25)
+	new := validations.NewString(r.NewPassword, "new").IsNotEmpty().Between(8, 25)
 
-	newErrors := validations.NewString(r.NewPassword, "new").IsNotEmpty().Between(8, 25).Result()
-
-	return types.Throw(currentErrors, newErrors)
+	return types.Throw(current, new)
 }
