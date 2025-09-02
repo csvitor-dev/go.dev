@@ -2,14 +2,17 @@ package validations
 
 import (
 	"encoding/base64"
+	"errors"
 	"net/mail"
+	"regexp"
 	"strings"
 
 	"github.com/csvitor-dev/social-media/types"
+	"github.com/csvitor-dev/social-media/utils/slices"
 )
 
 type StringExpression struct {
-	*types.ValidationError
+	validation *types.ValidationError
 	payload    string
 	isOptional bool
 }
@@ -17,10 +20,18 @@ type StringExpression struct {
 func NewString(input, fieldName string) *StringExpression {
 	return &StringExpression{
 		payload: input,
-		ValidationError: &types.ValidationError{
+		validation: &types.ValidationError{
 			FieldName: fieldName,
 		},
 	}
+}
+
+func (exp *StringExpression) GetValidationErrorParams() (string, []error) {
+	return exp.validation.FieldName, exp.validation.Errors
+}
+
+func (exp *StringExpression) Result() *types.ValidationError {
+	return exp.validation
 }
 
 func (exp *StringExpression) IsOptional() *StringExpression {
@@ -34,7 +45,7 @@ func (exp *StringExpression) IsNotEmpty() *StringExpression {
 	}
 
 	if exp.payload == "" {
-		exp.Error("cannot be empty")
+		exp.validation.Error("cannot be empty")
 	}
 	return exp
 }
@@ -45,7 +56,7 @@ func (exp *StringExpression) MinLength(min int) *StringExpression {
 	}
 
 	if len(exp.payload) < min {
-		exp.Errorf("must be at least %d characters long", min)
+		exp.validation.Errorf("must be at least %d characters long", min)
 	}
 	return exp
 }
@@ -56,7 +67,7 @@ func (exp *StringExpression) MaxLength(max int) *StringExpression {
 	}
 
 	if len(exp.payload) > max {
-		exp.Errorf("must be at most %d characters long", max)
+		exp.validation.Errorf("must be at most %d characters long", max)
 	}
 	return exp
 }
@@ -67,7 +78,7 @@ func (exp *StringExpression) Between(min, max int) *StringExpression {
 	}
 
 	if len(exp.payload) < min || len(exp.payload) > max {
-		exp.Errorf("must be between %d and %d characters long", min, max)
+		exp.validation.Errorf("must be between %d and %d characters long", min, max)
 	}
 	return exp
 }
@@ -78,7 +89,7 @@ func (exp *StringExpression) Email() *StringExpression {
 	}
 
 	if _, err := mail.ParseAddress(exp.payload); err != nil {
-		exp.Error("must be a valid email address")
+		exp.validation.Error("must be a valid email address")
 	}
 	return exp
 }
@@ -92,7 +103,7 @@ func (exp *StringExpression) JWT() *StringExpression {
 	err := validateJWTSegments(segments)
 
 	if len(segments) != 3 || err != nil {
-		exp.Error("must be a valid JWT format")
+		exp.validation.Error("must be a valid JWT format")
 	}
 	return exp
 }
@@ -115,12 +126,41 @@ func (exp *StringExpression) Refine(fn func(input string) (string, error)) *Stri
 	value, err := fn(exp.payload)
 
 	if err != nil {
-		exp.Error(err.Error())
+		exp.validation.Error(err.Error())
 	}
 	exp.payload = value
 	return exp
 }
 
-func (exp *StringExpression) Result() *types.ValidationError {
-	return exp.ValidationError
+func (exp *StringExpression) TrimRefine() *StringExpression {
+	removeExtraWhiteSpacesRegex, _ := regexp.Compile(`\s+`)
+	exp.payload = strings.
+		TrimSpace(removeExtraWhiteSpacesRegex.ReplaceAllString(exp.payload, " "))
+
+	return exp
+}
+
+func AllOptionalExpressionsAreValid(expressions ...*StringExpression) *StringExpression {
+	hasErrors := slices.Some(expressions,
+		func(exp *StringExpression, _ int) bool {
+			return len(exp.validation.Errors) > 0
+		})
+
+	if hasErrors {
+		return nil
+	}
+	allAreInvalid := slices.Every(expressions,
+		func(exp *StringExpression, _ int) bool {
+			return exp.payload == ""
+		})
+
+	if allAreInvalid {
+		return &StringExpression{
+			validation: &types.ValidationError{
+				FieldName: "bad_request",
+				Errors:    []error{errors.New("at least one field must be provided")},
+			},
+		}
+	}
+	return nil
 }
