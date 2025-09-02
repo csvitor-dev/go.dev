@@ -13,9 +13,12 @@ func configure(r *mux.Router, routes []types.Route) {
 }
 
 // Generate: returns a new HTTP Handler router
-func Generate(routes []types.Route) *mux.Router {
+func Generate(routes []types.Route, extraConfig ...func(router *mux.Router)) *mux.Router {
 	r := mux.NewRouter()
 	configure(r, routes)
 
+	for _, config := range extraConfig {
+		config(r)
+	}
 	return r
 }
