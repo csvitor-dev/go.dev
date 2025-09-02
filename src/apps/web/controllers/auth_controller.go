@@ -7,7 +7,7 @@ import (
 )
 
 func GetLoginView(w http.ResponseWriter, r *http.Request) {
-	views.Render(w, http.StatusOK, "login", nil)
+	views.Render(w, http.StatusOK, "auth.login", nil)
 }
 
 func FetchApiForTokenValidation(w http.ResponseWriter, r *http.Request) {
