@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -23,14 +22,13 @@ func Publish(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusUnauthorized, err)
 		return
 	}
-	body, err := io.ReadAll(r.Body)
+	var request publication.CreatePubRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request publication.CreatePubRequest
-	requests.MapToRequest(w, &request, body)
 	pub, err := request.Map(authUserId)
 
 	if err != nil {
@@ -145,14 +143,13 @@ func UpdatePubById(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, status, err)
 		return
 	}
-	body, err := io.ReadAll(r.Body)
+	var request publication.UpdatePubRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request publication.UpdatePubRequest
-	requests.MapToRequest(w, &request, body)
 	pub, err := request.Map(authUserId)
 
 	if err != nil {

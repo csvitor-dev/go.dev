@@ -2,20 +2,36 @@ package requests
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"github.com/csvitor-dev/social-media/pkg/responses"
 	"github.com/csvitor-dev/social-media/types"
 )
 
-func MapToRequest(w http.ResponseWriter, request types.Request, data []byte) {
-	if err := json.Unmarshal(data, &request); err != nil {
-		responses.SingleError(w, http.StatusBadRequest, err)
-		return
+// MapRequestErrorWriter: defines a function that writes an error to an HTTP response
+type MapRequestErrorWriter func(http.ResponseWriter)
+
+// MapToRequest: maps the given data to the request and validates it, returning any error encountered
+func MapToRequest(request types.Request, data io.ReadCloser) MapRequestErrorWriter {
+	body, err := io.ReadAll(data)
+
+	if err != nil {
+		return func(w http.ResponseWriter) {
+			responses.SingleError(w, http.StatusInternalServerError, err)
+		}
+	}
+
+	if err := json.Unmarshal(body, &request); err != nil {
+		return func(w http.ResponseWriter) {
+			responses.SingleError(w, http.StatusBadRequest, err)
+		}
 	}
 
 	if errs := request.Validate(); errs.HasErrors() {
-		responses.ValidationErrors(w, http.StatusUnprocessableEntity, errs.Payload)
-		return
+		return func(w http.ResponseWriter) {
+			responses.ValidationErrors(w, http.StatusUnprocessableEntity, errs.Payload)
+		}
 	}
+	return nil
 }

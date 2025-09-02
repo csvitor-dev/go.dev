@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"strconv"
 
@@ -89,14 +88,13 @@ func UpdateUserById(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusForbidden, errors.New("auth: target 'user_id' mismatch"))
 		return
 	}
-	body, err := io.ReadAll(r.Body)
+	var request user.UpdateUserRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.UpdateUserRequest
-	requests.MapToRequest(w, &request, body)
 	user, err := request.Map()
 
 	if err != nil {

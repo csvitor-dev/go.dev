@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"errors"
-	"io"
 	"net/http"
 	"time"
 
@@ -21,14 +20,13 @@ import (
 
 // Register: creates a user and delegates its persistence
 func Register(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
+	var request user.RegisterUserRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.RegisterUserRequest
-	requests.MapToRequest(w, &request, body)
 	user, err := request.Map()
 
 	if err != nil {
@@ -55,15 +53,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
+	var request user.LoginUserRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.LoginUserRequest
-	requests.MapToRequest(w, &request, body)
-
 	db, err := db.Connect()
 
 	if err != nil {
@@ -102,15 +98,13 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusUnauthorized, err)
 		return
 	}
-	body, err := io.ReadAll(r.Body)
+	var request user.RefreshUserPasswordRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusUnprocessableEntity, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.RefreshUserPasswordRequest
-	requests.MapToRequest(w, &request, body)
-
 	db, err := db.Connect()
 
 	if err != nil {
@@ -156,15 +150,13 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func RecoverPassword(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
+	var request user.RecoverUserPasswordRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.RecoverUserPasswordRequest
-	requests.MapToRequest(w, &request, body)
-
 	db, err := db.Connect()
 
 	if err != nil {
@@ -214,16 +206,14 @@ func VerifyToken(w http.ResponseWriter, r *http.Request) {
 }
 
 func ResetPassword(w http.ResponseWriter, r *http.Request) {
-	body, err := io.ReadAll(r.Body)
+	var request user.ResetUserPasswordRequest
 
-	if err != nil {
-		res.SingleError(w, http.StatusInternalServerError, err)
+	if writer := requests.
+		MapToRequest(&request, r.Body); writer != nil {
+		writer(w)
 		return
 	}
-	var request user.ResetUserPasswordRequest
-	requests.MapToRequest(w, &request, body)
-
-	err = auth.ValidateToken(request.Token)
+	err := auth.ValidateToken(request.Token)
 
 	if err != nil {
 		res.SingleError(w, http.StatusUnauthorized, err)
