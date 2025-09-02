@@ -9,7 +9,7 @@ import (
 	utils "github.com/csvitor-dev/social-media/utils/http"
 )
 
-var auth = []types.Route{
+var authViews = []types.Route{
 	{
 		Uri:    "/",
 		Method: http.MethodGet,
@@ -25,9 +25,15 @@ var auth = []types.Route{
 		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
 	},
 	{
+		Uri:                "/auth/forgot-password",
+		Method:             http.MethodGet,
+		Handler:            controllers.GetForgotPasswordView,
+		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+	},
+	{
 		Uri:                "/auth/reset-password",
 		Method:             http.MethodGet,
-		Handler:            controllers.FetchApiForTokenValidation,
+		Handler:            controllers.GetResetPasswordView,
 		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
 	},
 }
