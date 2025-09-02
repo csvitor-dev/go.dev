@@ -12,20 +12,20 @@ func Render(w http.ResponseWriter, status int, view string, data map[string]any)
 	folder, fileName, err := getViewPattern(view)
 
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		res.ErrorView(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	template, err := LoadTemplateFrom(folder, fileName)
 
 	if err != nil {
-		http.Error(w, "Error loading template: "+err.Error(), http.StatusInternalServerError)
+		res.ErrorView(w, "Error loading template: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 	res.View(w, status)
 
 	if err := template.Execute(w, data); err != nil {
-		http.Error(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
+		res.ErrorView(w, "Error rendering template: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 
