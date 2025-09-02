@@ -13,12 +13,13 @@ func (r *RequestValidationGuard) HasErrors() bool {
 	return false
 }
 
-func Throw(fields ...*ValidationError) RequestValidationGuard {
+func Throw(expressions ...Expression) RequestValidationGuard {
 	result := map[string][]error{}
 
-	for _, field := range fields {
-		if len(field.Errors) > 0 {
-			result[field.FieldName] = field.Errors
+	for _, exp := range expressions {
+		fieldName, errors := exp.GetValidationErrorParams()
+		if len(errors) > 0 {
+			result[fieldName] = errors
 		}
 	}
 	return RequestValidationGuard{
