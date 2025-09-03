@@ -18,7 +18,7 @@ func SendEmailForPasswordReset(email types.Email, token string) error {
 		<p>
 			<a
 				href="%s"
-				style="cursor:pointer,display:inline-block;padding:10px 20px;background:#4CAF50;color:#fff;text-decoration:none;border-radius:5px;"
+				style="cursor:pointer;display:inline-block;padding:10px 20px;background:#4CAF50;color:#fff;text-decoration:none;border-radius:5px;"
 			>Redefinir Senha</a>
 		</p>
 		<p>Se não foi você que solicitou, apenas ignore este email.</p>
@@ -38,5 +38,5 @@ func SendEmailForPasswordReset(email types.Email, token string) error {
 	}
 	log.Printf("Email sent: %s", response.Id)
 
-	return err
+	return nil
 }
