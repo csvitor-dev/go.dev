@@ -18,8 +18,8 @@ func init() {
 func main() {
 	r := router.Generate(routes.All(),
 		func(router *mux.Router) {
-			fileServer := http.FileServer(http.Dir("./src/apps/web/assets/"))
-			router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fileServer))
+			fileServer := http.FileServer(http.Dir("./src/apps/web/static/"))
+			router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fileServer))
 		})
 
 	log.Printf("Listening on port '%s'\n", env.WebEnv.PORT)
