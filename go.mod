@@ -1,4 +1,4 @@
-module github.com/csvitor-dev/social-media
+module github.com/csvitor-dev/go.dev
 
 go 1.24.0
 
