@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
-	"github.com/csvitor-dev/social-media/src/services/clients/api"
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/src/services/clients/api"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 func RequireAuth(next http.HandlerFunc) http.HandlerFunc {

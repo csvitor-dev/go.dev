@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"errors"
 
-	"github.com/csvitor-dev/social-media/internal/models"
-	errs "github.com/csvitor-dev/social-media/pkg/errors"
+	"github.com/csvitor-dev/go.dev/internal/models"
+	errs "github.com/csvitor-dev/go.dev/pkg/errors"
 )
 
 type Publications struct {

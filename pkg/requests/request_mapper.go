@@ -5,8 +5,8 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/pkg/responses"
-	"github.com/csvitor-dev/social-media/types"
+	"github.com/csvitor-dev/go.dev/pkg/responses"
+	"github.com/csvitor-dev/go.dev/types"
 )
 
 // MapRequestErrorWriter: defines a function that writes an error to an HTTP response

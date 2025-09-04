@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/csvitor-dev/social-media/internal/models"
-	"github.com/csvitor-dev/social-media/pkg/errors"
+	"github.com/csvitor-dev/go.dev/internal/models"
+	"github.com/csvitor-dev/go.dev/pkg/errors"
 )
 
 // Users: Users repository interface

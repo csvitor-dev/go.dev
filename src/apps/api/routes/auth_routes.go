@@ -3,9 +3,9 @@ package routes
 import (
 	"net/http"
 
-	auth "github.com/csvitor-dev/social-media/src/apps/api/controllers"
-	"github.com/csvitor-dev/social-media/src/middlewares"
-	"github.com/csvitor-dev/social-media/types"
+	auth "github.com/csvitor-dev/go.dev/src/apps/api/controllers"
+	"github.com/csvitor-dev/go.dev/src/middlewares"
+	"github.com/csvitor-dev/go.dev/types"
 )
 
 var authentication = []types.Route{

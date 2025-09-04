@@ -7,8 +7,8 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/csvitor-dev/social-media/types"
-	"github.com/csvitor-dev/social-media/utils/slices"
+	"github.com/csvitor-dev/go.dev/types"
+	"github.com/csvitor-dev/go.dev/utils/slices"
 )
 
 type StringExpression struct {

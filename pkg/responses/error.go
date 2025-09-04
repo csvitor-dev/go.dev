@@ -3,7 +3,7 @@ package responses
 import (
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/utils/slices"
+	"github.com/csvitor-dev/go.dev/utils/slices"
 )
 
 func ValidationErrors(w http.ResponseWriter, status int, errs map[string][]error) {

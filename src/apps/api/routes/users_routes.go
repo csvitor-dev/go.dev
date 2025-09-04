@@ -3,9 +3,9 @@ package routes
 import (
 	"net/http"
 
-	users "github.com/csvitor-dev/social-media/src/apps/api/controllers"
-	"github.com/csvitor-dev/social-media/src/middlewares"
-	"github.com/csvitor-dev/social-media/types"
+	users "github.com/csvitor-dev/go.dev/src/apps/api/controllers"
+	"github.com/csvitor-dev/go.dev/src/middlewares"
+	"github.com/csvitor-dev/go.dev/types"
 )
 
 var user = []types.Route{

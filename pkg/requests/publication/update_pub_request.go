@@ -1,9 +1,9 @@
 package publication
 
 import (
-	"github.com/csvitor-dev/social-media/internal/models"
-	"github.com/csvitor-dev/social-media/types"
-	"github.com/csvitor-dev/social-media/utils/validations"
+	"github.com/csvitor-dev/go.dev/internal/models"
+	"github.com/csvitor-dev/go.dev/types"
+	"github.com/csvitor-dev/go.dev/utils/validations"
 )
 
 type UpdatePubRequest struct {

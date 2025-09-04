@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/src/apps/web/views"
+	"github.com/csvitor-dev/go.dev/src/apps/web/views"
 )
 
 func GetLoginView(w http.ResponseWriter, r *http.Request) {

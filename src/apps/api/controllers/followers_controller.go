@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/csvitor-dev/social-media/internal/db"
-	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
-	pkg "github.com/csvitor-dev/social-media/pkg/errors"
-	res "github.com/csvitor-dev/social-media/pkg/responses"
-	"github.com/csvitor-dev/social-media/src/services/auth"
+	"github.com/csvitor-dev/go.dev/internal/db"
+	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
+	pkg "github.com/csvitor-dev/go.dev/pkg/errors"
+	res "github.com/csvitor-dev/go.dev/pkg/responses"
+	"github.com/csvitor-dev/go.dev/src/services/auth"
 	"github.com/gorilla/mux"
 )
 

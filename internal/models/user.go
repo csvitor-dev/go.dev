@@ -4,8 +4,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/csvitor-dev/social-media/pkg/errors"
-	"github.com/csvitor-dev/social-media/pkg/security"
+	"github.com/csvitor-dev/go.dev/pkg/errors"
+	"github.com/csvitor-dev/go.dev/internal/security"
 )
 
 // User: the model represents the 'User' entity mapped from the database

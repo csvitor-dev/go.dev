@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/utils/cli"
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	"github.com/csvitor-dev/go.dev/utils/cli"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 func Logger(next http.HandlerFunc) http.HandlerFunc {

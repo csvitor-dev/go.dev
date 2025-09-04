@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
 	_ "github.com/go-sql-driver/mysql"
 )
 

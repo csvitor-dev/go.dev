@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	res "github.com/csvitor-dev/social-media/pkg/responses"
+	res "github.com/csvitor-dev/go.dev/pkg/responses"
 )
 
 func Render(w http.ResponseWriter, status int, view string, data map[string]any) {

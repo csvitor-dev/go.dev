@@ -5,7 +5,7 @@ import (
 	"log"
 	"net/http"
 
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 // Json: writes an JSON body like response message

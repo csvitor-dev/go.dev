@@ -5,17 +5,17 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/csvitor-dev/social-media/internal/db"
-	repos "github.com/csvitor-dev/social-media/internal/db/repositories"
-	pkg "github.com/csvitor-dev/social-media/pkg/errors"
-	"github.com/csvitor-dev/social-media/pkg/requests"
-	"github.com/csvitor-dev/social-media/pkg/requests/user"
-	res "github.com/csvitor-dev/social-media/pkg/responses"
-	"github.com/csvitor-dev/social-media/pkg/security"
-	"github.com/csvitor-dev/social-media/src/services/auth"
-	"github.com/csvitor-dev/social-media/src/services/email"
-	"github.com/csvitor-dev/social-media/types"
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	"github.com/csvitor-dev/go.dev/internal/db"
+	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
+	"github.com/csvitor-dev/go.dev/internal/security"
+	pkg "github.com/csvitor-dev/go.dev/pkg/errors"
+	"github.com/csvitor-dev/go.dev/pkg/requests"
+	"github.com/csvitor-dev/go.dev/pkg/requests/user"
+	res "github.com/csvitor-dev/go.dev/pkg/responses"
+	"github.com/csvitor-dev/go.dev/src/services/auth"
+	"github.com/csvitor-dev/go.dev/src/services/email"
+	"github.com/csvitor-dev/go.dev/types"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 // Register: creates a user and delegates its persistence

@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/csvitor-dev/social-media/types"
+	"github.com/csvitor-dev/go.dev/types"
 	"github.com/gorilla/mux"
 )
 

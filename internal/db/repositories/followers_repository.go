@@ -3,7 +3,7 @@ package repositories
 import (
 	"database/sql"
 
-	"github.com/csvitor-dev/social-media/internal/models"
+	"github.com/csvitor-dev/go.dev/internal/models"
 )
 
 // Followers: Followers repository interface

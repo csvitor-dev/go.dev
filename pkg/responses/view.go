@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 // View: prepare HTML output

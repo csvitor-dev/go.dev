@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
-	"github.com/csvitor-dev/social-media/internal/models"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/internal/models"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/google/uuid"
 )

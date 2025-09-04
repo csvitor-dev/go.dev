@@ -3,10 +3,10 @@ package routes
 import (
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/src/apps/web/controllers"
-	"github.com/csvitor-dev/social-media/src/middlewares"
-	"github.com/csvitor-dev/social-media/types"
-	utils "github.com/csvitor-dev/social-media/utils/http"
+	"github.com/csvitor-dev/go.dev/src/apps/web/controllers"
+	"github.com/csvitor-dev/go.dev/src/middlewares"
+	"github.com/csvitor-dev/go.dev/types"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 var authViews = []types.Route{

@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
-	"github.com/csvitor-dev/social-media/types"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/types"
 	"github.com/resend/resend-go/v2"
 )
 

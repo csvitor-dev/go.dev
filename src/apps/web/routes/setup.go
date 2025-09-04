@@ -3,7 +3,7 @@ package routes
 import (
 	"slices"
 
-	"github.com/csvitor-dev/social-media/types"
+	"github.com/csvitor-dev/go.dev/types"
 )
 
 func All() []types.Route {

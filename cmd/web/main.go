@@ -4,9 +4,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
-	"github.com/csvitor-dev/social-media/src/apps/web/routes"
-	"github.com/csvitor-dev/social-media/src/router"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/src/apps/web/routes"
+	"github.com/csvitor-dev/go.dev/src/router"
 	"github.com/gorilla/mux"
 )
 

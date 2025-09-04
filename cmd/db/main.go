@@ -5,8 +5,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/csvitor-dev/social-media/internal/config/env"
-	"github.com/csvitor-dev/social-media/internal/db/migrations"
+	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/internal/db/migrations"
 )
 
 func init() {
