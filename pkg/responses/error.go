@@ -28,3 +28,7 @@ func SingleError(w http.ResponseWriter, status int, err error) {
 		Error: err.Error(),
 	})
 }
+
+func ClientError(w http.ResponseWriter, r *http.Response) {
+
+}
