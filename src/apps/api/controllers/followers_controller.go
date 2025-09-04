@@ -7,7 +7,7 @@ import (
 
 	"github.com/csvitor-dev/go.dev/internal/db"
 	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
-	pkg "github.com/csvitor-dev/go.dev/pkg/errors"
+	internal_errors "github.com/csvitor-dev/go.dev/internal/errors"
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
 	"github.com/csvitor-dev/go.dev/src/services/auth"
 	"github.com/gorilla/mux"
@@ -43,7 +43,7 @@ func Follow(w http.ResponseWriter, r *http.Request) {
 	if err = repo.Follow(userToFollowId, followerId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -84,7 +84,7 @@ func Unfollow(w http.ResponseWriter, r *http.Request) {
 	if err = repo.Unfollow(userToUnfollowId, followerId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError

@@ -7,7 +7,7 @@ import (
 
 	"github.com/csvitor-dev/go.dev/internal/db"
 	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
-	pkg "github.com/csvitor-dev/go.dev/pkg/errors"
+	internal_errors "github.com/csvitor-dev/go.dev/internal/errors"
 	"github.com/csvitor-dev/go.dev/pkg/requests"
 	"github.com/csvitor-dev/go.dev/pkg/requests/publication"
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
@@ -99,7 +99,7 @@ func GetPubById(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -135,7 +135,7 @@ func UpdatePubById(w http.ResponseWriter, r *http.Request) {
 	if err := repo.IsAuthorOfPub(authUserId, pubId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusForbidden
@@ -189,7 +189,7 @@ func DeletePubById(w http.ResponseWriter, r *http.Request) {
 	if err := repo.IsAuthorOfPub(authUserId, pubId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusForbidden
@@ -248,7 +248,7 @@ func Like(w http.ResponseWriter, r *http.Request) {
 	if err := repo.Like(pubId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -278,7 +278,7 @@ func Dislike(w http.ResponseWriter, r *http.Request) {
 	if err := repo.Dislike(pubId); err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError

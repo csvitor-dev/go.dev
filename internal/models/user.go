@@ -4,7 +4,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/csvitor-dev/go.dev/pkg/errors"
+	"github.com/csvitor-dev/go.dev/internal/errors"
 	"github.com/csvitor-dev/go.dev/internal/security"
 )
 

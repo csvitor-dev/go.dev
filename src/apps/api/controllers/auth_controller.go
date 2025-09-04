@@ -8,7 +8,7 @@ import (
 	"github.com/csvitor-dev/go.dev/internal/db"
 	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
 	"github.com/csvitor-dev/go.dev/internal/security"
-	pkg "github.com/csvitor-dev/go.dev/pkg/errors"
+	internal_errors "github.com/csvitor-dev/go.dev/internal/errors"
 	"github.com/csvitor-dev/go.dev/pkg/requests"
 	"github.com/csvitor-dev/go.dev/pkg/requests/user"
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
@@ -118,7 +118,7 @@ func RefreshPassword(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var status int
 
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			status = http.StatusNotFound
 		} else {
 			status = http.StatusInternalServerError
@@ -168,7 +168,7 @@ func RecoverPassword(w http.ResponseWriter, r *http.Request) {
 	targetUser, err := repo.FindByEmail(request.Email)
 
 	if err != nil {
-		if errors.Is(err, pkg.ErrModelNotFound) {
+		if errors.Is(err, internal_errors.ErrModelNotFound) {
 			res.Json(w, http.StatusNoContent, nil)
 			return
 		}

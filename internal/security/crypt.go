@@ -1,7 +1,7 @@
 package security
 
 import (
-	"github.com/csvitor-dev/go.dev/pkg/errors"
+	"github.com/csvitor-dev/go.dev/internal/errors"
 	"golang.org/x/crypto/bcrypt"
 )
 
