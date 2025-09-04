@@ -11,8 +11,10 @@ import (
 
 type ApiClient struct {
 	baseUrl    string
-	HttpClient *http.Client
+	httpClient *http.Client
 	token      string
+	response   *http.Response
+	clientErr  error
 }
 
 type RequestOptions struct {
@@ -25,7 +27,7 @@ type RequestOptions struct {
 func NewApiClient(baseUrl string) *ApiClient {
 	return &ApiClient{
 		baseUrl: baseUrl,
-		HttpClient: &http.Client{
+		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
 	}
@@ -40,49 +42,31 @@ func (c *ApiClient) url(path string) string {
 	return fmt.Sprintf("%s%s", c.baseUrl, path)
 }
 
-func ExecuteRequest[T any](client *ApiClient, options RequestOptions) (T, error) {
-	var response T
-	payload, err := client.do(options)
-
-	if err != nil || len(payload) == 0 {
-		return response, err
-	}
-	err = json.Unmarshal(payload, &response)
-
-	if err != nil {
-		return response, err
-	}
-	return response, nil
-}
-
-func (c *ApiClient) do(options RequestOptions) ([]byte, error) {
+func (c *ApiClient) Do(options RequestOptions) *ApiClient {
 	var reqBody io.Reader
 	jsonBody, err := json.Marshal(options.Body)
 
 	if err != nil {
-		return nil, err
+		c.clientErr = err
+		return c
 	}
 	reqBody = bytes.NewBuffer(jsonBody)
 	request, err := http.NewRequest(options.Method, c.url(options.Path), reqBody)
 
 	if err != nil {
-		return nil, err
+		c.clientErr = err
+		return c
 	}
 	request.Header.Set("Content-Type", "application/json")
 
 	if options.RequireAuth {
 		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
 	}
-	response, err := c.HttpClient.Do(request)
+	c.response, c.clientErr = c.httpClient.Do(request)
 
-	if err != nil {
-		return nil, err
-	}
-	defer response.Body.Close()
-	data, _ := io.ReadAll(response.Body)
+	return c
+}
 
-	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("API error (%d): %s", response.StatusCode, string(data))
-	}
-	return data, nil
+func (c *ApiClient) Done() (*http.Response, error) {
+	return c.response, c.clientErr
 }

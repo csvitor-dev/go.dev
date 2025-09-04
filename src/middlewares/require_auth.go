@@ -19,14 +19,13 @@ func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 		client := api.NewApiClient(env.WebEnv.API_URL).WithToken(cookie.Value)
 
-		if _, err := api.ExecuteRequest[any](
-			client,
+		if _, err := client.Do(
 			api.RequestOptions{
 				Method:      http.MethodGet,
 				Path:        "/auth/verify-token",
 				Body:        nil,
 				RequireAuth: true,
-			}); err != nil {
+			}).Done(); err != nil {
 			path := fmt.Sprintf("/auth/login?err=%s", err.Error())
 			utils.Redirect(w, r, path, http.StatusSeeOther)
 			return
