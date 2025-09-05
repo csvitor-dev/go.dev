@@ -10,31 +10,27 @@ import (
 
 var follower = []types.Route{
 	{
-		Uri:     "/follow/{userId}",
-		Method:  http.MethodPost,
-		Handler: followers.Follow,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/follow/{userId}",
+		Method:             http.MethodPost,
+		Handler:            followers.Follow,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/unfollow/{userId}",
-		Method:  http.MethodPost,
-		Handler: followers.Unfollow,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/unfollow/{userId}",
+		Method:             http.MethodPost,
+		Handler:            followers.Unfollow,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/followers/{userId}",
-		Method:  http.MethodGet,
-		Handler: followers.GetFollowers,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/followers/{userId}",
+		Method:             http.MethodGet,
+		Handler:            followers.GetFollowers,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/following/{userId}",
-		Method:  http.MethodGet,
-		Handler: followers.GetFollowing,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/following/{userId}",
+		Method:             http.MethodGet,
+		Handler:            followers.GetFollowing,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 }

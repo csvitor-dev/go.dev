@@ -17,31 +17,31 @@ var authViews = []types.Route{
 		Handler: func(w http.ResponseWriter, r *http.Request) {
 			utils.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 		},
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 	{
 		Uri:                "/auth/login",
 		Method:             http.MethodGet,
 		Handler:            views.GetLoginView,
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 	{
 		Uri:                "/auth/register",
 		Method:             http.MethodGet,
 		Handler:            views.GetRegisterView,
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 	{
 		Uri:                "/auth/forgot-password",
 		Method:             http.MethodGet,
 		Handler:            views.GetForgotPasswordView,
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 	{
 		Uri:                "/auth/reset-password",
 		Method:             http.MethodGet,
 		Handler:            views.GetResetPasswordView,
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 }
 
@@ -50,6 +50,6 @@ var authActions = []types.Route{
 		Uri:                "/auth/register",
 		Method:             http.MethodPost,
 		Handler:            actions.RegisterUserAction,
-		MiddlewarePipeline: types.NewPipeline().With(middlewares.Logger),
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
 }

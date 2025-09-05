@@ -10,59 +10,51 @@ import (
 
 var publications = []types.Route{
 	{
-		Uri:     "/pubs",
-		Method:  http.MethodPost,
-		Handler: pubs.Publish,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs",
+		Method:             http.MethodPost,
+		Handler:            pubs.Publish,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs",
-		Method:  http.MethodGet,
-		Handler: pubs.GetAllPubs,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs",
+		Method:             http.MethodGet,
+		Handler:            pubs.GetAllPubs,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/{pubId}",
-		Method:  http.MethodGet,
-		Handler: pubs.GetPubById,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/{pubId}",
+		Method:             http.MethodGet,
+		Handler:            pubs.GetPubById,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/{pubId}",
-		Method:  http.MethodPut,
-		Handler: pubs.UpdatePubById,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/{pubId}",
+		Method:             http.MethodPut,
+		Handler:            pubs.UpdatePubById,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/{pubId}",
-		Method:  http.MethodDelete,
-		Handler: pubs.DeletePubById,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/{pubId}",
+		Method:             http.MethodDelete,
+		Handler:            pubs.DeletePubById,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/user/{userId}",
-		Method:  http.MethodGet,
-		Handler: pubs.GetAllPubsForUser,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/user/{userId}",
+		Method:             http.MethodGet,
+		Handler:            pubs.GetAllPubsForUser,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/{pubId}/like",
-		Method:  http.MethodPost,
-		Handler: pubs.Like,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/{pubId}/like",
+		Method:             http.MethodPost,
+		Handler:            pubs.Like,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 	{
-		Uri:     "/pubs/{pubId}/dislike",
-		Method:  http.MethodPost,
-		Handler: pubs.Dislike,
-		MiddlewarePipeline: types.NewPipeline().
-			With(middlewares.Logger, middlewares.Authorize),
+		Uri:                "/pubs/{pubId}/dislike",
+		Method:             http.MethodPost,
+		Handler:            pubs.Dislike,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger, middlewares.Authorize),
 	},
 }
