@@ -6,6 +6,7 @@ import (
 	"github.com/csvitor-dev/go.dev/internal/config/env"
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
 	"github.com/csvitor-dev/go.dev/src/services/clients/api"
+	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 func RegisterUserAction(w http.ResponseWriter, r *http.Request) {
@@ -30,8 +31,9 @@ func RegisterUserAction(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if response.StatusCode >= http.StatusBadRequest {
+	if utils.IsErrorResponse(response) {
 		res.ClientError(w, response)
+		return
 	}
 	res.Json(w, response.StatusCode, nil)
 }
