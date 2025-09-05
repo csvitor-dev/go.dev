@@ -1,6 +1,10 @@
 package router
 
 import (
+	"net/http"
+
+	"github.com/csvitor-dev/go.dev/src/middlewares"
+	"github.com/csvitor-dev/go.dev/src/views"
 	"github.com/csvitor-dev/go.dev/types"
 	"github.com/gorilla/mux"
 )
@@ -8,7 +12,7 @@ import (
 // configure: sets up the API routes
 func configure(r *mux.Router, routes []types.Route) {
 	for _, route := range routes {
-		r.HandleFunc(route.Uri, route.GetHandler()).Methods(route.Method)
+		r.HandleFunc(route.Uri, route.EnqueueHandler()).Methods(route.Method)
 	}
 }
 
@@ -21,4 +25,11 @@ func Generate(routes []types.Route, extraConfig ...func(router *mux.Router)) *mu
 		config(r)
 	}
 	return r
+}
+
+func MapDefaultRoutes(r *mux.Router) {
+	notFound := func(w http.ResponseWriter, r *http.Request) {
+		views.Render(w, http.StatusNotFound, "errors.404", nil)
+	}
+	r.NotFoundHandler = http.HandlerFunc(middlewares.Logger(notFound))
 }
