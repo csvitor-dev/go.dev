@@ -17,13 +17,6 @@ type ApiClient struct {
 	clientErr  error
 }
 
-type RequestOptions struct {
-	Body        any
-	RequireAuth bool
-	Method      string
-	Path        string
-}
-
 func NewApiClient(baseUrl string) *ApiClient {
 	return &ApiClient{
 		baseUrl: baseUrl,
