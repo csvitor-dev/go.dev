@@ -4,45 +4,35 @@ import (
 	"bytes"
 	"io"
 	"net/http"
-	"strings"
 
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
 )
 
-func getViewPattern(view string) (string, string) {
-	parts := strings.Split(view, ".")
-	lastIndex := len(parts) - 1
-	path := strings.Join(parts[:lastIndex], "/")
-
-	return path, parts[lastIndex]
-}
-
-func writeView(w io.Writer, view string, data map[string]any) error {
-	path, fileName := getViewPattern(view)
-	template, err := LoadTemplateFrom(path, fileName)
+func writeView(w io.Writer, options ViewOptions) error {
+	template, err := LoadTemplateFrom(options)
 
 	if err != nil {
 		return err
 	}
 
-	if err := template.Execute(w, data); err != nil {
+	if err := template.Execute(w, options.Data); err != nil {
 		return err
 	}
 	return nil
 }
 
-func Render(w http.ResponseWriter, status int, view string, data map[string]any) {
-	res.View(w, status)
+func Render(w http.ResponseWriter, options ViewOptions) {
+	res.View(w, options.StatusCode)
 
-	if err := writeView(w, view, data); err != nil {
+	if err := writeView(w, options); err != nil {
 		res.ErrorView(w, "view: "+err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func Get(view string, data map[string]any) (string, error) {
+func Get(options ViewOptions) (string, error) {
 	var buf bytes.Buffer
 
-	if err := writeView(&buf, view, data); err != nil {
+	if err := writeView(&buf, options); err != nil {
 		return "", err
 	}
 	return buf.String(), nil
