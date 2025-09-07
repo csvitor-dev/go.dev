@@ -14,9 +14,11 @@ func SendEmailForPasswordReset(email types.Email, token string) error {
 	resetLink := fmt.Sprintf("%s/auth/reset-password?token=%s", env.ApiEnv.WEB_URL, token)
 
 	content, err := views.Get(
-		"email.recover-password",
-		map[string]any{
-			"ResetLink": resetLink,
+		views.ViewOptions{
+			View: "email.recover-password",
+			Data: map[string]any{
+				"ResetLink": resetLink,
+			},
 		},
 	)
 

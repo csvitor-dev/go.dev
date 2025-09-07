@@ -29,7 +29,12 @@ func Generate(routes []types.Route, extraConfig ...func(router *mux.Router)) *mu
 
 func MapDefaultRoutes(r *mux.Router) {
 	notFound := func(w http.ResponseWriter, r *http.Request) {
-		views.Render(w, http.StatusNotFound, "errors.404", nil)
+		views.Render(w,
+			views.ViewOptions{
+				StatusCode: http.StatusNotFound,
+				View:       "errors.404",
+			},
+		)
 	}
 	r.NotFoundHandler = http.HandlerFunc(middlewares.Logger(notFound))
 }

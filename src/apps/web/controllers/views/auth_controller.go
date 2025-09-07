@@ -7,17 +7,33 @@ import (
 )
 
 func GetLoginView(w http.ResponseWriter, r *http.Request) {
-	views.Render(w, http.StatusOK, "auth.login", nil)
+	views.Render(w,
+		views.ViewOptions{
+			StatusCode: http.StatusOK,
+			View:       "auth.login",
+		})
 }
 
 func GetRegisterView(w http.ResponseWriter, r *http.Request) {
-	views.Render(w, http.StatusOK, "auth.register", nil)
+	views.Render(w,
+		views.ViewOptions{
+			StatusCode: http.StatusOK,
+			View:       "auth.register",
+		})
 }
 
 func GetForgotPasswordView(w http.ResponseWriter, r *http.Request) {
-	views.Render(w, http.StatusOK, "auth.forgot-password", nil)
+	views.Render(w,
+		views.ViewOptions{
+			StatusCode: http.StatusOK,
+			View:       "auth.forgot-password",
+		})
 }
 
 func GetResetPasswordView(w http.ResponseWriter, r *http.Request) {
-	views.Render(w, http.StatusOK, "auth.reset-password", nil)
+	views.Render(w,
+		views.ViewOptions{
+			StatusCode: http.StatusOK,
+			View:       "auth.reset-password",
+		})
 }
