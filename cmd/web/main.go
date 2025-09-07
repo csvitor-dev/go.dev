@@ -15,7 +15,7 @@ func init() {
 	env.LoadGeneralEnv()
 	env.LoadWebEnv()
 
-	err := resources.PrepareTailwind()
+	err := resources.Prepare()
 
 	if err != nil {
 		log.Fatalln(err)

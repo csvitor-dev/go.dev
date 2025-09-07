@@ -5,25 +5,34 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-func fail(err error) error {
-	message := fmt.Sprintf("fail to prepare stylesheet (%s)", err.Error())
-	return fmt.Errorf("resource: %s", message)
+var avaliableResources = map[string]string{
+	"tailwindcss": "npm run build:css",
+	"react":       "npm run build:vite",
 }
 
-func PrepareTailwind() error {
-	err := os.Chdir("./resources/tailwindcss")
+func Prepare() error {
+	err := os.Chdir("./resources")
 
 	if err != nil {
-		return fail(err)
+		return fmt.Errorf("resources: fail to prepare resources (%v)", err)
 	}
-	_, err = exec.Command("npm", "run", "build:css").Output()
 
-	if err != nil {
-		return fail(err)
+	for resource, command := range avaliableResources {
+		if err = os.Chdir(fmt.Sprintf("./%s", resource)); err != nil {
+			return fmt.Errorf("resources: fail to prepare resource from %s", resource)
+		}
+		args := strings.Split(command, " ")
+		_, err = exec.Command(args[0], args[1:]...).Output()
+
+		if err != nil {
+			return fmt.Errorf("resources: fail on execute '%s' (%v)", command, err)
+		}
+		os.Chdir("..")
 	}
-	log.Println("Tailwind classes loaded!")
+	log.Println("Resources loaded successfully!")
 
-	return os.Chdir("../..")
+	return os.Chdir("..")
 }
