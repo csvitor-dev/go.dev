@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/csvitor-dev/go.dev/internal/config/env"
+	"github.com/csvitor-dev/go.dev/src/views"
 	"github.com/csvitor-dev/go.dev/types"
 	"github.com/resend/resend-go/v2"
 )
@@ -12,17 +13,19 @@ import (
 func SendEmailForPasswordReset(email types.Email, token string) error {
 	resetLink := fmt.Sprintf("%s/auth/reset-password?token=%s", env.ApiEnv.WEB_URL, token)
 
-	email.Body = fmt.Sprintf(`
-		<h2>Recuperação de senha</h2>
-		<p>Você solicitou a redefinição de senha. Clique no botão abaixo para continuar:</p>
-		<p>
-			<a
-				href="%s"
-				style="cursor:pointer;display:inline-block;padding:10px 20px;background:#4CAF50;color:#fff;text-decoration:none;border-radius:5px;"
-			>Redefinir Senha</a>
-		</p>
-		<p>Se não foi você que solicitou, apenas ignore este email.</p>
-	`, resetLink)
+	content, err := views.Get(
+		views.ViewOptions{
+			View: "email.recover-password",
+			Data: map[string]any{
+				"ResetLink": resetLink,
+			},
+		},
+	)
+
+	if err != nil {
+		return err
+	}
+	email.Body = content
 
 	client := resend.NewClient(env.EmailEnv.API_KEY)
 	params := &resend.SendEmailRequest{

@@ -17,10 +17,14 @@ func init() {
 
 func main() {
 	r := router.Generate(routes.All(),
-		func(router *mux.Router) {
-			fileServer := http.FileServer(http.Dir("./src/apps/web/assets/"))
-			router.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", fileServer))
-		})
+		func(r *mux.Router) {
+			fileServer := http.FileServer(http.Dir("./src/static/"))
+			r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fileServer))
+		},
+		func(r *mux.Router) {
+			router.MapDefaultRoutes(r)
+		},
+	)
 
 	log.Printf("Listening on port '%s'\n", env.WebEnv.PORT)
 	log.Fatalln(http.ListenAndServe(env.WebEnv.PORT, r))

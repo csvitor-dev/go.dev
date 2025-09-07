@@ -19,3 +19,7 @@ func Redirect(w http.ResponseWriter, r *http.Request, url string, status int) {
 	Recorder.Status = status
 	http.Redirect(w, r, url, status)
 }
+
+func IsErrorResponse(r *http.Response) bool {
+	return r.StatusCode >= http.StatusBadRequest
+}

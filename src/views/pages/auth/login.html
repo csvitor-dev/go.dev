@@ -4,15 +4,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css" />
   </head>
   <body>
     <div class="card">
       <h2>Enter your account</h2>
-      {{if .Error}}
-      <div class="msg err">{{.Error}}</div>
-      {{end}}
+      <div class="hidden msg error"></div>
       <form method="POST" action="/auth/login">
         <label for="email">Email</label>
         <input id="email" type="email" name="email" required />

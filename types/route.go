@@ -12,6 +12,6 @@ type Route struct {
 	*MiddlewarePipeline
 }
 
-func (route *Route) GetHandler() http.HandlerFunc {
+func (route *Route) EnqueueHandler() http.HandlerFunc {
 	return route.MiddlewarePipeline.Apply(route.Handler)
 }

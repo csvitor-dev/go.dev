@@ -4,13 +4,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Register an user</title>
-    <link rel="stylesheet" type="text/css" href="/assets/css/index.css" />
-    <link rel="stylesheet" type="text/css" href="/assets/css/login.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/index.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css" />
+    <script src="/static/js/jquery.min.js" defer></script>
+    <script src="/static/js/register-user.js" defer></script>
   </head>
   <body>
     <div class="card">
       <h2>Create an account</h2>
-      <div class="hidden msg err"></div>
+      <div class="hidden msg error"></div>
       <form id="register" method="post">
         <label for="name">Name</label>
         <input id="name" type="text" name="name" required />
