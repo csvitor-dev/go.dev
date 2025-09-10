@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/csvitor-dev/go.dev/internal/config/env"
-	"github.com/csvitor-dev/go.dev/resources"
 	"github.com/csvitor-dev/go.dev/src/apps/web/routes"
 	"github.com/csvitor-dev/go.dev/src/router"
 	"github.com/gorilla/mux"
@@ -14,12 +13,6 @@ import (
 func init() {
 	env.LoadGeneralEnv()
 	env.LoadWebEnv()
-
-	err := resources.Prepare()
-
-	if err != nil {
-		log.Fatalln(err)
-	}
 }
 
 func main() {
