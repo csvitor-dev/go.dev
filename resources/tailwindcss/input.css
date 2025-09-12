@@ -1,5 +1,4 @@
 @import "tailwindcss";
 
 @source "../../src/views/**/*.html";
-@source "../react/src/components/*.tsx";
-@source "../react/src/pages/*.tsx";
+@source "../react/src/**/*.tsx";
