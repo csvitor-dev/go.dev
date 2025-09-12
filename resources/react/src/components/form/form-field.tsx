@@ -4,6 +4,7 @@ import type {
   Path,
   UseFormRegister,
 } from "react-hook-form";
+import { Input } from "@/components/ui/input";
 
 interface Props<T extends FieldValues> {
   type: string;
@@ -22,19 +23,10 @@ export default function FormField<T extends FieldValues>({
 }: Props<T>) {
   return (
     <>
-      <label htmlFor={target} className="text-sm font-medium text-gray-700">
-        {children}
-      </label>
-      <input
-        id={target}
-        type={type}
-        className="w-full rounded-lg border border-gray-300 p-2 focus:ring-2 focus:ring-blue-500 outline-none"
-        {...register(target)}
-      />
+      <label className="block text-sm font-medium mb-1">{children}</label>
+      <Input id={target} type={type} {...register(target)} />
       {error && (
-        <span className="text-red-600 text-sm bg-red-100 p-2 rounded-lg">
-          {error.message}
-        </span>
+        <span className="text-sm text-red-500 mt-1">{error.message}</span>
       )}
     </>
   );
