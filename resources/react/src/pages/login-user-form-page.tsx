@@ -10,22 +10,22 @@ import {
 } from "@/components/ui/card";
 import AuthLayout from "@/layouts/auth-layout";
 import {
-  registerUserSchema,
-  type RegisterUserSchema,
-} from "@/schemas/register-user-schema";
+  loginUserSchema,
+  type LoginUserSchema,
+} from "@/schemas/login-user-schema";
 import { Button } from "@/components/ui/button";
 import { SendHorizonal } from "lucide-react";
 
-export default function RegisterUserFormPage() {
+export default function LoginUserFormPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterUserSchema>({
-    resolver: zodResolver(registerUserSchema),
+  } = useForm<LoginUserSchema>({
+    resolver: zodResolver(loginUserSchema),
   });
 
-  const submit: SubmitHandler<RegisterUserSchema> = (data) => {
+  const submit: SubmitHandler<LoginUserSchema> = (data) => {
     console.log(data);
   };
 
@@ -33,29 +33,11 @@ export default function RegisterUserFormPage() {
     <AuthLayout>
       <Card className="max-w-md w-full mx-auto mt-10">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
-            Create an account
-          </CardTitle>
+          <CardTitle className="text-2xl font-bold">Login</CardTitle>
         </CardHeader>
 
         <form onSubmit={handleSubmit(submit)}>
           <CardContent className="flex flex-col gap-4">
-            <FormField
-              type="text"
-              target="name"
-              register={register}
-              error={errors.name}
-            >
-              Name
-            </FormField>
-            <FormField
-              type="text"
-              target="nickname"
-              register={register}
-              error={errors.nickname}
-            >
-              Nickname
-            </FormField>
             <FormField
               type="email"
               target="email"
@@ -72,14 +54,6 @@ export default function RegisterUserFormPage() {
             >
               Password
             </FormField>
-            <FormField
-              type="password"
-              target="confirmPassword"
-              register={register}
-              error={errors.confirmPassword}
-            >
-              Confirm password
-            </FormField>
           </CardContent>
 
           <CardFooter className="flex flex-col gap-3 mt-6">
@@ -88,12 +62,21 @@ export default function RegisterUserFormPage() {
               Submit
             </Button>
             <p className="text-sm text-center text-muted-foreground">
-              Already have an account?{" "}
+              Still don't have an account?{" "}
               <a
-                href="/auth/login"
+                href="/auth/register"
                 className="underline underline-offset-4 hover:text-primary"
               >
-                Log in
+                Sign up
+              </a>
+            </p>
+            <p className="text-sm text-center text-muted-foreground">
+              Forgot your password?{" "}
+              <a
+                href="/auth/forgot-password"
+                className="underline underline-offset-4 hover:text-primary"
+              >
+                Recover password
               </a>
             </p>
           </CardFooter>
