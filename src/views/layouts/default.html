@@ -9,9 +9,10 @@
     <link rel="stylesheet" href="/static/css/tailwind.css" />
   </head>
   <body>
-    <main>{{block "content" .}}{{end}}</main>
-    <footer>
-      <p>© 2025 - All rights reserved</p>
-    </footer>
+    {{block "content" .}}{{end}}
+    
+    {{if .ScriptUI}}
+    <script type="module" src="/static/ui/{{.ScriptUI}}.js"></script>
+    {{end}}
   </body>
 </html>

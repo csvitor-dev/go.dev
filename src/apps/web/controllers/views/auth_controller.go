@@ -19,6 +19,10 @@ func GetRegisterView(w http.ResponseWriter, r *http.Request) {
 		views.ViewOptions{
 			StatusCode: http.StatusOK,
 			View:       "auth.register",
+			Layout:     "default",
+			Data: map[string]any{
+				"ScriptUI": "register-user-form",
+			},
 		})
 }
 

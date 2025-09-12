@@ -70,7 +70,7 @@ export default function RegisterUserForm() {
 
           <button
             type="submit"
-            className="mt-4 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg transition hover:bg-indigo-700 hover:pointer"
+            className="mt-4 w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg transition hover:bg-indigo-700 hover:cursor-pointer"
           >
             Submit
           </button>
