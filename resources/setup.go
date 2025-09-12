@@ -1,4 +1,4 @@
-package main
+package resources
 
 import (
 	"fmt"
@@ -13,19 +13,15 @@ var avaliableResources = map[string]string{
 	"react":       "npm run build:vite",
 }
 
-func main() {
+func Prepare(args []string) error {
 	var err error
 
-	if len(os.Args) >= 2 {
-		err = prepareOnly(os.Args[1:]...)
+	if len(args) > 0 {
+		err = prepareOnly(args...)
 	} else {
 		err = prepareAll()
 	}
-
-	if err != nil {
-		log.Fatalln(err)
-	}
-	os.Exit(0)
+	return err
 }
 
 func prepareAll() error {
@@ -79,7 +75,7 @@ func prepareOnly(resources ...string) error {
 		log.Printf("'%s' resource loaded successfully!", resource)
 		os.Chdir("..")
 	}
-	log.Println("All resources loaded successfully!")
+	log.Printf("Only resources [%s] was load successfully!\n", strings.Join(resources, ", "))
 
 	return os.Chdir("..")
 }
