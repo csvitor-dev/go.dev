@@ -21,7 +21,7 @@ func GetRegisterView(w http.ResponseWriter, r *http.Request) {
 			View:       "auth.register",
 			Layout:     "default",
 			Data: map[string]any{
-				"ScriptUI": "register-user-form",
+				"ScriptUI": "register-user-form-page",
 			},
 		})
 }
