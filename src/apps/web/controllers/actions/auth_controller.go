@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"bytes"
+	"io"
 	"net/http"
 
 	"github.com/csvitor-dev/go.dev/internal/config/env"
@@ -10,19 +12,20 @@ import (
 )
 
 func RegisterUserAction(w http.ResponseWriter, r *http.Request) {
-	r.ParseForm()
+	defer r.Body.Close()
+	body, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
 	client := api.NewApiClient(env.WebEnv.API_URL)
 
 	response, err := client.Do(
 		api.RequestOptions{
 			Path:   "/auth/register",
 			Method: "POST",
-			Body: map[string]string{
-				"name":     r.FormValue("name"),
-				"nickname": r.FormValue("nickname"),
-				"email":    r.FormValue("email"),
-				"password": r.FormValue("password"),
-			},
+			Body:   bytes.NewBuffer(body),
 		},
 	).Done()
 
