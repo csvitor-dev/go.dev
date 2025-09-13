@@ -1,10 +1,7 @@
 package api
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"time"
 )
@@ -31,20 +28,12 @@ func (c *ApiClient) WithToken(token string) *ApiClient {
 	return c
 }
 
-func (c *ApiClient) url(path string) string {
-	return fmt.Sprintf("%s%s", c.baseUrl, path)
+func (c *ApiClient) url(resource string) string {
+	return fmt.Sprintf("%s%s", c.baseUrl, resource)
 }
 
 func (c *ApiClient) Do(options RequestOptions) *ApiClient {
-	var reqBody io.Reader
-	jsonBody, err := json.Marshal(options.Body)
-
-	if err != nil {
-		c.clientErr = err
-		return c
-	}
-	reqBody = bytes.NewBuffer(jsonBody)
-	request, err := http.NewRequest(options.Method, c.url(options.Path), reqBody)
+	request, err := http.NewRequest(options.Method, c.url(options.Path), options.Body)
 
 	if err != nil {
 		c.clientErr = err

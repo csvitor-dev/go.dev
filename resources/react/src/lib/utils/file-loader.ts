@@ -26,11 +26,12 @@ function createEntries(files: string[], from: string, to: string) {
     const jsxExp = capitalize(fileName);
 
     const content = `import ReactDOM from "react-dom/client";
+import ThemeProvider from "@/components/providers/theme-provider";
 import ${jsxExp} from "${originalPath}";
 
-ReactDOM.createRoot(document.getElementById("ui")!).render(<${capitalize(
-      jsxExp
-    )} />);
+ReactDOM.createRoot(document.getElementById("ui")!).render(<ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <${jsxExp} />
+</ThemeProvider>);
 `;
 
     fs.writeFileSync(tempFilePath, content, "utf-8");

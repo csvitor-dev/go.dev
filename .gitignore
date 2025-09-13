@@ -54,5 +54,5 @@ dist-ssr
 **/tailwind.css
 
 # Vite build
-ui
+**/static/ui
 .tmp

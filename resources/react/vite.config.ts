@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
-import { getEntriesPattern } from "./utils/file-loader";
+import { getEntriesPattern } from "./src/lib/utils";
 
 // https://vite.dev/config/
 export default defineConfig({

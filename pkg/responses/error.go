@@ -1,6 +1,7 @@
 package responses
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/csvitor-dev/go.dev/utils/slices"
@@ -30,5 +31,12 @@ func SingleError(w http.ResponseWriter, status int, err error) {
 }
 
 func ClientError(w http.ResponseWriter, r *http.Response) {
+	defer r.Body.Close()
+	var apiError struct {
+		Errors map[string][]string `json:"errors,omitempty"`
+		Error  string              `json:"error,omitempty"`
+	}
 
+	json.NewDecoder(r.Body).Decode(&apiError)
+	Json(w, r.StatusCode, apiError)
 }

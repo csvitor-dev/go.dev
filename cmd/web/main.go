@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/csvitor-dev/go.dev/internal/config/env"
 	"github.com/csvitor-dev/go.dev/resources"
@@ -15,7 +16,20 @@ func init() {
 	env.LoadGeneralEnv()
 	env.LoadWebEnv()
 
-	err := resources.Prepare()
+	if len(os.Args) == 1 {
+		return
+	}
+
+	if os.Args[1] != "--build-resources" {
+		log.Printf("Ignore flag '%s'\n", os.Args[1])
+		return
+	}
+	buildArgs := []string{}
+
+	if len(os.Args) > 2 {
+		buildArgs = os.Args[2:]
+	}
+	err := resources.Prepare(buildArgs)
 
 	if err != nil {
 		log.Fatalln(err)

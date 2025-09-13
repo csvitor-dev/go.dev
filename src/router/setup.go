@@ -33,6 +33,10 @@ func MapDefaultRoutes(r *mux.Router) {
 			views.ViewOptions{
 				StatusCode: http.StatusNotFound,
 				View:       "errors.404",
+				Layout:     "default",
+				Data: map[string]any{
+					"ScriptUI": "not-found-page",
+				},
 			},
 		)
 	}
