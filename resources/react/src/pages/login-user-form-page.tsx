@@ -58,7 +58,7 @@ export default function LoginUserFormPage() {
 
           <CardFooter className="flex flex-col gap-3 mt-6">
             <Button type="submit" className="w-full">
-              <SendHorizonal className="h-4 w-4 mr-2" />
+              <SendHorizonal className="size-4 mr-2" />
               Submit
             </Button>
             <p className="text-sm text-center text-muted-foreground">

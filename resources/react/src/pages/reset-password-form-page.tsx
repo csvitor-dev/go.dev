@@ -60,7 +60,7 @@ export default function ResetPasswordFormPage() {
         <CardContent className="space-y-4">
           {error && (
             <Alert className="text-red-600">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -91,7 +91,7 @@ export default function ResetPasswordFormPage() {
               className="w-full mt-4"
               disabled={error.length > 0}
             >
-              <Lock className="h-4 w-4 mr-2" />
+              <Lock className="size-4 mr-2" />
               Reset
             </Button>
           </form>

@@ -55,14 +55,14 @@ export default function ForgotPasswordFormPage() {
         <CardContent className="space-y-4">
           {error && (
             <Alert className="text-red-600">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
 
           {success && (
             <Alert className="text-emerald-600">
-              <CheckCircle2 className="h-4 w-4" />
+              <CheckCircle2 className="size-4" />
               <AlertDescription>
                 If the email exists, you will receive the instructions shortly.
               </AlertDescription>
@@ -80,7 +80,7 @@ export default function ForgotPasswordFormPage() {
             </FormField>
 
             <Button type="submit" className="w-full mt-4">
-              <Mail className="h-4 w-4 mr-2" />
+              <Mail className="size-4 mr-2" />
               Send instructions
             </Button>
           </form>
