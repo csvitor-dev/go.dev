@@ -11,6 +11,7 @@ import (
 var avaliableResources = map[string]string{
 	"tailwindcss": "npm run build:css",
 	"react":       "npm run build:vite",
+	"react-email": "npm run export:email",
 }
 
 func Prepare(args []string) error {
