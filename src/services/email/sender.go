@@ -17,7 +17,7 @@ func SendEmailForPasswordReset(email types.Email, token string) error {
 		views.ViewOptions{
 			View: "email.recover-password",
 			Data: map[string]any{
-				"ResetLink": resetLink,
+				"Link": resetLink,
 			},
 		},
 	)
