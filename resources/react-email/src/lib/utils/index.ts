@@ -1,2 +1,2 @@
-export { exportGolangProp } from "./export-golang-prop";
+export { golangProp } from "./golang-prop";
 export { nameof } from "./nameof";

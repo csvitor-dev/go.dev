@@ -7,7 +7,7 @@ import {
   Text,
 } from "@react-email/components";
 import BaseLayout from "@/layouts/base-layout";
-import { exportGolangProp, nameof } from "@/lib/utils";
+import { golangProp } from "@/lib/utils";
 
 interface RecoverPasswordProps {
   resetLink: string;
@@ -33,7 +33,7 @@ export default function RecoverPassword({ resetLink }: RecoverPasswordProps) {
               Click the button below to continue:
             </Text>
             <Button
-              href={exportGolangProp(nameof(() => resetLink))}
+              href={golangProp(() => resetLink)}
               className="rounded-lg bg-primary-foreground text-primary px-5 py-2 text-sm font-medium no-underline shadow-sm"
             >
               Reset Password
