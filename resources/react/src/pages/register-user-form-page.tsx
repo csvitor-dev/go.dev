@@ -52,9 +52,8 @@ export default function RegisterUserFormPage() {
       setSuccess(true);
       return;
     }
-    const json = await response.json();
-    setError("Ocorreu um erro!");
-    console.log(json);
+    const { error } = (await response.json()) as { error: string };
+    setError(error);
   };
 
   return (
