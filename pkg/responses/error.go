@@ -2,7 +2,9 @@ package responses
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/csvitor-dev/go.dev/utils/slices"
 )
@@ -38,5 +40,22 @@ func ClientError(w http.ResponseWriter, r *http.Response) {
 	}
 
 	json.NewDecoder(r.Body).Decode(&apiError)
-	Json(w, r.StatusCode, apiError)
+
+	if apiError.Errors != nil {
+		var fields []string
+
+		for field := range apiError.Errors {
+			fields = append(fields, field)
+		}
+		apiError.Error = fmt.Sprintf(
+			"client: validation errors in fields (%s)",
+			strings.Join(fields, ", "),
+		)
+	}
+
+	Json(w, r.StatusCode,
+		map[string]string{
+			"error": apiError.Error,
+		},
+	)
 }

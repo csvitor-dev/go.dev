@@ -56,3 +56,8 @@ dist-ssr
 # Vite build
 **/static/ui
 .tmp
+
+# React Email build/export
+.react-email
+
+**/email/*.html

@@ -52,4 +52,10 @@ var authActions = []types.Route{
 		Handler:            actions.RegisterUserAction,
 		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
 	},
+	{
+		Uri:                "/auth/login",
+		Method:             http.MethodPost,
+		Handler:            actions.LoginAction,
+		MiddlewarePipeline: types.NewPipeline(middlewares.Logger),
+	},
 }
