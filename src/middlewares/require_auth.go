@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/csvitor-dev/go.dev/internal/config/env"
@@ -14,7 +13,7 @@ func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("auth_token")
 
 		if err != nil || cookie.Value == "" {
-			utils.Redirect(w, r, "/auth/login?err=You+are+not+authenticated", http.StatusSeeOther)
+			utils.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 			return
 		}
 		client := api.NewApiClient(env.WebEnv.API_URL).WithToken(cookie.Value)
@@ -26,8 +25,7 @@ func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 				Body:        nil,
 				RequireAuth: true,
 			}).Done(); err != nil {
-			path := fmt.Sprintf("/auth/login?err=%s", err.Error())
-			utils.Redirect(w, r, path, http.StatusSeeOther)
+			utils.Redirect(w, r, "/auth/login", http.StatusSeeOther)
 			return
 		}
 		next(w, r)
