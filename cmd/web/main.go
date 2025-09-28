@@ -9,12 +9,14 @@ import (
 	"github.com/csvitor-dev/go.dev/resources"
 	"github.com/csvitor-dev/go.dev/src/apps/web/routes"
 	"github.com/csvitor-dev/go.dev/src/router"
+	"github.com/csvitor-dev/go.dev/src/services/cookies"
 	"github.com/gorilla/mux"
 )
 
 func init() {
 	env.LoadGeneralEnv()
 	env.LoadWebEnv()
+	cookies.Active()
 
 	if len(os.Args) == 1 {
 		return

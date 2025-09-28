@@ -7,11 +7,12 @@ import (
 
 	"github.com/csvitor-dev/go.dev/internal/db"
 	repos "github.com/csvitor-dev/go.dev/internal/db/repositories"
-	"github.com/csvitor-dev/go.dev/internal/security"
 	internal_errors "github.com/csvitor-dev/go.dev/internal/errors"
+	"github.com/csvitor-dev/go.dev/internal/security"
 	"github.com/csvitor-dev/go.dev/pkg/requests"
 	"github.com/csvitor-dev/go.dev/pkg/requests/user"
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
+	user_res "github.com/csvitor-dev/go.dev/pkg/responses/user"
 	"github.com/csvitor-dev/go.dev/src/services/auth"
 	"github.com/csvitor-dev/go.dev/src/services/email"
 	"github.com/csvitor-dev/go.dev/types"
@@ -85,10 +86,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusInternalServerError, err)
 		return
 	}
-	res.Json(w, http.StatusOK, map[string]any{
-		"user_id": user.Id,
-		"token":   token,
-	})
+	res.Json(w, http.StatusOK,
+		user_res.TokenResponse{
+			UserId: user.Id,
+			Token:  token,
+		})
 }
 
 func RefreshPassword(w http.ResponseWriter, r *http.Request) {

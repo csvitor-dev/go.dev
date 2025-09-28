@@ -10,6 +10,7 @@ import (
 	res "github.com/csvitor-dev/go.dev/pkg/responses"
 	"github.com/csvitor-dev/go.dev/pkg/responses/user"
 	"github.com/csvitor-dev/go.dev/src/services/clients/api"
+	"github.com/csvitor-dev/go.dev/src/services/cookies"
 	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
@@ -78,5 +79,14 @@ func LoginAction(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	res.Json(w, response.StatusCode, tokenResponse)
+
+	if err := cookies.Save(
+		w,
+		tokenResponse.UserId,
+		tokenResponse.Token,
+	); err != nil {
+		res.SingleError(w, http.StatusBadRequest, err)
+		return
+	}
+	res.Json(w, http.StatusNoContent, nil)
 }
