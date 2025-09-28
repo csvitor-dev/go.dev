@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { AlertCircle, SendHorizonal } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import Cookies from "js-cookie";
 
 export default function LoginUserFormPage() {
   const {
@@ -45,13 +44,11 @@ export default function LoginUserFormPage() {
       body: JSON.stringify({ email, password }),
     });
 
-    const json = await response.json();
-
     if (response.ok === false) {
-      setError(json.error);
+      setError((await response.json()).error);
       return;
     }
-    Cookies.set("auth_token", json.token, { path: "/" });
+    location.href = "/home";
   };
 
   return (
