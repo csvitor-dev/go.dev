@@ -31,7 +31,6 @@ func prepareAll() error {
 	if err != nil {
 		return fmt.Errorf("resources: fail to prepare resources (%v)", err)
 	}
-
 	for resource, command := range avaliableResources {
 		if err = os.Chdir(fmt.Sprintf("./%s", resource)); err != nil {
 			return fmt.Errorf("resources: fail to prepare resource from %s", resource)
