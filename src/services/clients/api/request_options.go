@@ -5,8 +5,9 @@ import (
 )
 
 type RequestOptions struct {
-	Body        *bytes.Buffer
-	RequireAuth bool
-	Method      string
-	Path        string
+	Body            *bytes.Buffer
+	RequireAuth     bool
+	Method          string
+	Path            string
+	IsAuthenticated bool
 }

@@ -2,7 +2,6 @@ package actions
 
 import (
 	"bytes"
-	"encoding/json"
 	"io"
 	"net/http"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/csvitor-dev/go.dev/pkg/responses/user"
 	"github.com/csvitor-dev/go.dev/src/services/clients/api"
 	"github.com/csvitor-dev/go.dev/src/services/cookies"
-	utils "github.com/csvitor-dev/go.dev/utils/http"
 )
 
 func RegisterUserAction(w http.ResponseWriter, r *http.Request) {
@@ -22,26 +20,18 @@ func RegisterUserAction(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	client := api.NewApiClient(env.WebEnv.API_URL)
+	client := api.NewApiClient(env.WebEnv.API_URL, w)
 
-	response, err := client.Do(
+	response, status := api.ExecuteRequest[user.TokenResponse](
+		client,
 		api.RequestOptions{
 			Path:   "/auth/register",
 			Method: "POST",
 			Body:   bytes.NewBuffer(body),
 		},
-	).Done()
+	)
 
-	if err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if utils.IsErrorResponse(response) {
-		res.ClientError(w, response)
-		return
-	}
-	res.Json(w, response.StatusCode, nil)
+	res.Json(w, status, response)
 }
 
 func LoginAction(w http.ResponseWriter, r *http.Request) {
@@ -52,41 +42,24 @@ func LoginAction(w http.ResponseWriter, r *http.Request) {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	client := api.NewApiClient(env.WebEnv.API_URL)
+	client := api.NewApiClient(env.WebEnv.API_URL, w)
 
-	response, err := client.Do(
+	response, status := api.ExecuteRequest[user.TokenResponse](
+		client,
 		api.RequestOptions{
 			Path:   "/auth/login",
 			Method: "POST",
 			Body:   bytes.NewBuffer(body),
 		},
-	).Done()
-
-	if err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
-
-	if utils.IsErrorResponse(response) {
-		res.ClientError(w, response)
-		return
-	}
-	defer response.Body.Close()
-	var tokenResponse user.TokenResponse
-	body, _ = io.ReadAll(response.Body)
-
-	if err := json.Unmarshal(body, &tokenResponse); err != nil {
-		res.SingleError(w, http.StatusBadRequest, err)
-		return
-	}
+	)
 
 	if err := cookies.Save(
 		w,
-		tokenResponse.UserId,
-		tokenResponse.Token,
+		response.UserId,
+		response.Token,
 	); err != nil {
 		res.SingleError(w, http.StatusBadRequest, err)
 		return
 	}
-	res.Json(w, http.StatusNoContent, nil)
+	res.Json(w, status, nil)
 }

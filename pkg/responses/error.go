@@ -34,11 +34,11 @@ func SingleError(w http.ResponseWriter, status int, err error) {
 
 func ClientError(w http.ResponseWriter, r *http.Response) {
 	defer r.Body.Close()
+
 	var apiError struct {
 		Errors map[string][]string `json:"errors,omitempty"`
 		Error  string              `json:"error,omitempty"`
 	}
-
 	json.NewDecoder(r.Body).Decode(&apiError)
 
 	if apiError.Errors != nil {

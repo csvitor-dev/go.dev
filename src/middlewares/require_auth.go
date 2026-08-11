@@ -3,9 +3,9 @@ package middlewares
 import (
 	"net/http"
 
-	"github.com/csvitor-dev/go.dev/internal/config/env"
-	"github.com/csvitor-dev/go.dev/src/services/clients/api"
-	utils "github.com/csvitor-dev/go.dev/utils/http"
+	"fmt"
+
+	"github.com/csvitor-dev/go.dev/src/services/auth"
 )
 
 func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
@@ -13,19 +13,13 @@ func RequireAuth(next http.HandlerFunc) http.HandlerFunc {
 		cookie, err := r.Cookie("auth_token")
 
 		if err != nil || cookie.Value == "" {
-			utils.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+			http.Redirect(w, r, "/auth/login?err=You+are+not+authenticated", http.StatusSeeOther)
 			return
 		}
-		client := api.NewApiClient(env.WebEnv.API_URL).WithToken(cookie.Value)
 
-		if _, err := client.Do(
-			api.RequestOptions{
-				Method:      http.MethodGet,
-				Path:        "/auth/verify-token",
-				Body:        nil,
-				RequireAuth: true,
-			}).Done(); err != nil {
-			utils.Redirect(w, r, "/auth/login", http.StatusSeeOther)
+		if err := auth.ValidateToken(cookie.Value); err != nil {
+			path := fmt.Sprintf("/auth/login?err=%s", err.Error())
+			http.Redirect(w, r, path, http.StatusSeeOther)
 			return
 		}
 		next(w, r)

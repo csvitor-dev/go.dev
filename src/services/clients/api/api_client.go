@@ -1,54 +1,94 @@
 package api
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"time"
+
+	res "github.com/csvitor-dev/go.dev/pkg/responses"
 )
 
 type ApiClient struct {
-	baseUrl    string
-	httpClient *http.Client
-	token      string
-	response   *http.Response
-	clientErr  error
+	BaseUrl    string
+	Writer     http.ResponseWriter
+	HttpClient *http.Client
+	Token      string
 }
 
-func NewApiClient(baseUrl string) *ApiClient {
+func NewApiClient(baseUrl string, writer http.ResponseWriter, token ...string) *ApiClient {
+	var onlyToken string
+
+	if len(token) == 1 {
+		onlyToken = token[0]
+	}
 	return &ApiClient{
-		baseUrl: baseUrl,
-		httpClient: &http.Client{
+		BaseUrl: baseUrl,
+		Writer:  writer,
+		HttpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+		Token: onlyToken,
 	}
 }
 
-func (c *ApiClient) WithToken(token string) *ApiClient {
-	c.token = token
-	return c
+func (c *ApiClient) url(path string) string {
+	return fmt.Sprintf("%s%s", c.BaseUrl, path)
 }
 
-func (c *ApiClient) url(resource string) string {
-	return fmt.Sprintf("%s%s", c.baseUrl, resource)
+func ExecuteRequest[T any](client *ApiClient, options RequestOptions) (T, int) {
+	var response T
+	payload, status := client.do(options)
+
+	if !parse(client.Writer, payload, &response) {
+		return response, 0
+	}
+	return response, status
 }
 
-func (c *ApiClient) Do(options RequestOptions) *ApiClient {
-	request, err := http.NewRequest(options.Method, c.url(options.Path), options.Body)
+func (c *ApiClient) do(options RequestOptions) ([]byte, int) {
+	var reqBody io.Reader
+	jsonBody, err := json.Marshal(options.Body)
 
 	if err != nil {
-		c.clientErr = err
-		return c
+		res.SingleError(c.Writer, 0, errors.New("Falha ao gerar parse da requisição."))
+		return nil, 0
+	}
+	reqBody = bytes.NewBuffer(jsonBody)
+	request, err := http.NewRequest(options.Method, c.url(options.Path), reqBody)
+
+	if err != nil {
+		res.SingleError(c.Writer, 0, errors.New("Falha na tentativa de criar a requisição."))
+		return nil, 0
 	}
 	request.Header.Set("Content-Type", "application/json")
 
-	if options.RequireAuth {
-		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.token))
+	if options.IsAuthenticated {
+		request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", c.Token))
 	}
-	c.response, c.clientErr = c.httpClient.Do(request)
+	response, err := c.HttpClient.Do(request)
 
-	return c
+	if err != nil {
+		res.SingleError(c.Writer, 0, errors.New("Falha na tentativa de enviar a requisição."))
+		return nil, 0
+	}
+	defer response.Body.Close()
+	data, _ := io.ReadAll(response.Body)
+
+	if response.StatusCode >= http.StatusBadRequest {
+		res.ClientError(c.Writer, response)
+		return nil, response.StatusCode
+	}
+	return data, response.StatusCode
 }
 
-func (c *ApiClient) Done() (*http.Response, error) {
-	return c.response, c.clientErr
+func parse[T any](w http.ResponseWriter, payload []byte, response T) bool {
+	if err := json.Unmarshal(payload, &response); err != nil {
+		res.SingleError(w, http.StatusBadRequest, errors.New("Falha ao tentar parsear a resposta da requisição."))
+		return false
+	}
+	return true
 }
