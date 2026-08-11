@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-var avaliableResources = map[string]string{
+var avaliableBuildResources = map[string]string{
 	"tailwindcss": "npm run build:css",
 	"react":       "npm run build:vite",
 	"react-email": "npm run export:email",
@@ -25,16 +25,28 @@ func Prepare(args []string) error {
 	return err
 }
 
+func installDeps(resource string) {
+	log.Println(fmt.Sprintf("Installing dependencies from %s...", resource))
+
+	_, err := exec.Command("npm", "install").Output()
+
+	if err != nil {
+		log.Fatalf("Failed to install dependencies: %v", err)
+	}
+}
+
 func prepareAll() error {
 	err := os.Chdir("./resources")
 
 	if err != nil {
 		return fmt.Errorf("resources: fail to prepare resources (%v)", err)
 	}
-	for resource, command := range avaliableResources {
+	for resource, command := range avaliableBuildResources {
 		if err = os.Chdir(fmt.Sprintf("./%s", resource)); err != nil {
 			return fmt.Errorf("resources: fail to prepare resource from %s", resource)
 		}
+		installDeps(resource)
+
 		args := strings.Split(command, " ")
 		_, err = exec.Command(args[0], args[1:]...).Output()
 
@@ -57,7 +69,7 @@ func prepareOnly(resources ...string) error {
 	}
 
 	for _, resource := range resources {
-		command, exists := avaliableResources[resource]
+		command, exists := avaliableBuildResources[resource]
 
 		if !exists {
 			return fmt.Errorf("resources: the resource '%s' do not exists", resource)
@@ -66,6 +78,7 @@ func prepareOnly(resources ...string) error {
 		if err = os.Chdir(fmt.Sprintf("./%s", resource)); err != nil {
 			return fmt.Errorf("resources: fail to prepare resource from %s", resource)
 		}
+		installDeps(resource)
 		args := strings.Split(command, " ")
 		_, err = exec.Command(args[0], args[1:]...).Output()
 
