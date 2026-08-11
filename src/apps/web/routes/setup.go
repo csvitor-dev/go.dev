@@ -7,5 +7,5 @@ import (
 )
 
 func All() []types.Route {
-	return slices.Concat(authViews, authActions)
+	return slices.Concat(authViews, authActions, guardViews)
 }
