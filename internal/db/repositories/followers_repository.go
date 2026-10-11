@@ -87,6 +87,11 @@ func (repo *Followers) FindFollowersByUserId(userId uint64) ([]models.User, erro
 			return nil, err
 		}
 		followers = append(followers, follower)
+
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 	return followers, nil
 }
@@ -120,6 +125,10 @@ func (repo *Followers) FindFollowingByUserId(userId uint64) ([]models.User, erro
 			return nil, err
 		}
 		following = append(following, user)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 	return following, nil
 }

@@ -111,6 +111,10 @@ func (repo *Publications) SearchPubsByUserId(userId uint64) ([]models.Publicatio
 		}
 		publications = append(publications, pub)
 	}
+	
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
 	return publications, nil
 }
 
@@ -147,6 +151,10 @@ func (repo *Publications) FilterPubsByUserId(userId uint64) ([]models.Publicatio
 			return nil, err
 		}
 		publications = append(publications, pub)
+	}
+	
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 	return publications, nil
 }
